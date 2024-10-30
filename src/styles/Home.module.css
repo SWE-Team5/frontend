@@ -1,0 +1,30 @@
+.text{
+    font-size:6px;
+    padding-top:0.5px;
+    padding-bottom:0.3px;
+}
+
+.text2{
+    padding-top:0.5px;
+    font-size:5px;
+    border-width: 0.5px;
+    border-color: rgb(23 37 84);
+}
+
+.text3{
+    font-size:8px;
+    line-height: 0.7rem;
+}
+
+.text4{
+    font-size:9.5px;
+    font-weight:light;
+}
+
+.text5{
+    font-size:11px;
+}
+
+.borderBottom{
+    border-bottom-width:1px;
+}
