@@ -21,10 +21,17 @@ function Schedule(){
 
 
     const todos = [
-        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01'},
-        {id:2, title: '2학기 개강', start:'2024-03-04'},
-        {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07'},
-        {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07'},
+        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: []},
+        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[]},
+        {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07',
+          notice: ['2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)',
+            '2024학년도 2학기 학사과정 조기졸업 신청 안내',
+            '2024년 금신사랑장학생 선발 안내',
+          ]
+        },
+        {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07',
+          notice: []
+        },
         
         // {title: , date:};
         // {title: , date:};
@@ -230,23 +237,23 @@ function Schedule(){
       } else{
             console.log(arg.view.type === 'listMonth')
             if (arg.view.type === 'listMonth') {
-                return;
+                
             }
       }
 
     if (arg.view.type === 'listMonth') {
         // console.log(arg.event.extendedProps.showDate)
         return (
-        <div className="custom-event flex flex-row">
+        <div className="custom-event flex flex-row py-0">
             {/* <div className="flex-none event-date w-20 pr-4">
                 {`${arg.event.extendedProps.showDate ? startDate == endDate ? startDate : startDate + '-' + endDate : ""}`}
             </div> */}
             <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'green' : 'darkgray', borderRadius:'3px'}}>
-                <div className="flex-auto align-middle " style={{padding:"auto" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'green' : 'inherit'}}>
+                <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'green' : 'inherit'}}>
                     {event.title}
                 </div>
                 <div className="flex-none event-favorite align-middle" style={{ backgroundColor:isFavorite ? 'green' : "inherit"}} onClick={() => toggleFavorite(arg.event.id)}>
-                    <span className="event-favorite-star align-middle" style={{paddingBottom:"2px" ,boxSizing:"border-box", backgroundColor:isFavorite ? 'green' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>&#9733;</span> {/* 별표 아이콘 */}
+                    <span className="event-favorite-star align-middle" style={{paddingBottom:"5px" ,boxSizing:"border-box", backgroundColor:isFavorite ? 'green' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>&#9733;</span> {/* 별표 아이콘 */}
                 </div>
             </div>
             
@@ -330,7 +337,7 @@ function Schedule(){
                     handleWindowResize={true}
                     dragScroll={true}
                     locale="ko"
-                    
+                    eventClick={(arg)=>{navigate("/ScheduleDetail", { notice: arg.event.notice });}}
                     listDayFormat={{
                         weekday: "short",
                         day: "numeric",
