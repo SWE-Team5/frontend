@@ -10,6 +10,10 @@
     
 }
 
+.fc {
+    max-height: 550px; /* 캘린더의 최대 높이 고정 */
+    overflow-y: auto;  /* 높이를 초과하면 세로 스크롤 활성화 */
+}
 
 /* 달력부분 */
 .fc .fc-media-screen{
@@ -41,12 +45,12 @@
 .fc .fc-toolbar.fc-header-toolbar {
     margin: 0;
     background-color: lightgray;
-    height: 45px;
+    height: 40px;
     padding-left: 15px;
     padding-right: 15px;
 
     font-size: 10px;
-    line-height: 30px;
+    line-height: 40px;
     color: black;
     border-radius: 10px 10px 0px 0px;
 }
@@ -246,6 +250,125 @@
 .fc-event-title{
     background-color: darkgray;
 }
+.fc-daygrid-block-event{
+    width:100%;
+    border-radius:3px;
+    padding : 3px 5px;
+}
+
+/* 일별 이벤트 2개까지, oveflow 발생 시 관리*/
+/* .fc-daygrid-day-frame{
+    overflow: scroll;
+}
+.fc-daygrid-day-events {
+    overflow: scroll;
+} */
+
+.fc-popover.fc-more-popover{
+    width: 230px;
+    overflow: scroll;
+}
+.fc-more-popover-misc{
+    display: none;
+}
+.fc-popover-body{
+    overflow: scroll;
+}
+.fc-popover-body .fc-daygrid-event-harness{
+    min-width: 100%;
+    width: fit-content;
+    /* overflow: scroll; */
+    /* box-sizing: initial; */
+}
+.fc-popover-body .fc-daygrid-event-harness .fc-event-main{
+    width:fit-content;
+}
+.fc-popover-title{
+    padding: 8px;
+    padding-right: 10px; 
+    padding-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+}
+.fc-popover-title{
+    flex:auto;
+}
+.fc-popover-close{
+    flex:none;
+}
+
+/*달력 이벤트 관리*/
+.fc-event-main{
+    width: 100%;
+    background-color: inherit;
+    margin:0;
+    /* margin-right: 5px; */
+}
+
+.fc-h-event .fc-event-main{
+    color:black;
+    background-color: inherit;
+}
+
+.event-favorite{
+    background-color: rgb(169, 169, 169);
+}
+
+.event-favorite-starP{
+    height: '12px';
+    background-color: inherit;
+}
+
+.cal-custom-event{
+    width: 100%;
+    background-color: inherit;
+    text-align: left;
+    overflow: scroll;
+}
+
+.custom-event{
+    background-color: inherit;
+}
+
+.fc-popover-body .cal-custom-event{
+    background-color: inherit;
+    overflow:hidden;
+}
+
+.cal-custom-event .event-title{
+    background-color: inherit;
+    padding:0;
+    color:black;
+}
+
+
+/*다음달 날짜 삭제*/
+.fc-day-other-month {
+    display: none; /* 현재 월이 아닌 날짜를 숨김 */
+}
+
+
+/*리스트 부분*/
+.fc-list-day, .fc-list-event-time, .fc-list-event-graphic{
+    display: none;
+}
+
+.fc-list-event-title{
+    width: 100%;
+    margin:0;
+    border: 0;
+}
+
+tr, th, td{
+    border: 0;
+}
+
+.fc-list-table {
+    border: 0;
+}
+
+
+/*스케줄 형식 변환 : 캘랜더, 리스트형태*/
 
 .sche-types{
     position: absolute;
