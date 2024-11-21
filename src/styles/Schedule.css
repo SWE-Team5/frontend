@@ -1,0 +1,286 @@
+@charset "utf-8";
+
+
+#calendar-container {
+    width: 1000px;
+    margin: 50px auto;
+    /* height:900px;
+    position: static;
+    overflow: hidden; */
+    
+}
+
+
+/* 달력부분 */
+.fc .fc-media-screen{
+    display: block;
+    position: static;
+    overflow: hidden;
+}
+
+/* 일요일 날짜: 빨간색 */
+.fc .fc-day-sun a {
+    color: red;
+}
+  
+/* 토요일 날짜: 파란색 */
+.fc .fc-day-sat a {
+    color: blue;
+
+}
+
+/* 제목 볼드 빼기 */
+.fc .fc-toolbar-title {
+    font-weight: bold;
+    color:black;
+    font-size: 16px;
+    background-color: lightgray;
+}
+
+/* 일정표 툴 바  */
+.fc .fc-toolbar.fc-header-toolbar {
+    margin: 0;
+    background-color: lightgray;
+    height: 45px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    font-size: 10px;
+    line-height: 30px;
+    color: black;
+    border-radius: 10px 10px 0px 0px;
+}
+
+/* 툴바의 버튼 */
+.fc .fc-toolbar-chunk .fc-button {
+    background-color: lightgray;
+    border: none;
+    padding:0;
+    margin: 0;
+    font-size: 14px;
+}
+
+.fc-toolbar-chunk {
+    background-color: lightgray;
+}
+
+.fc-toolbar-chunk:nth-child(1) {
+    width: 120px;
+    display: flex;
+    flex-direction: row;
+    row-gap: 1px;
+    margin:0px;
+}
+
+.fc-toolbar-chunk:nth-child(1) h2 {
+    margin-right: 12px;
+}
+
+.fc-toolbar-chunk:nth-child(3) {
+    float:right;
+    margin:0px;
+}
+
+.fc-toolbar-chunk:nth-child(3) .fc-listMonth-button {
+    padding: 1px;  
+    background-image: url("../assets/images/list.png");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    font-size: 0px;
+    color:transparent;
+    height: 20px;
+    width: 20px;
+    padding : 5px;
+}
+
+.fc-toolbar-chunk:nth-child(3) .fc-listMonth-button.fc-button-active:hover{
+    padding: 1px;  
+    background-image: url("../assets/images/list.png");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    font-size: 0px;
+    height: 20px;
+    width: 20px;
+    padding : 5px;
+    color:transparent;
+    border:0px;
+    margin:0px;
+}
+
+.fc-toolbar-chunk:nth-child(3) .fc-listMonth-button.fc-button-active{
+    display: none;
+}
+
+.fc-dayGridMonth-button.fc-button-primary{
+    background-image: url("../assets/images/calendar.png");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    font-size: 0;
+    height: 20px;
+    width: 20px;
+    padding : 5px;
+    color:transparent;
+    border:0px;
+    margin:0px;
+}
+
+.fc-dayGridMonth-button:hover{  
+    background-image: url("../assets/images/calendar.png");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    font-size: 0px;
+    height: 20px;
+    width: 20px;
+    padding : 5px;
+    color:transparent;
+    border:0px;
+    margin:0px;
+}
+
+.fc-dayGridMonth-button.fc-button-active{
+    display: none;
+}
+
+.fc-toolbar-chunk .fc-button .fc-icon{
+    background-color: lightgray;
+}
+
+/* 툴바 사용 불가 버튼 스타일 */
+.fc .fc-toolbar-chunk .fc-button:disabled {
+    color: lightgray;
+}
+/* 툴바 사용 불가 버튼 hover 시 스타일 주지 않기 */
+.fc .fc-toolbar-chunk .fc-button:disabled:hover {
+    background-color: transparent;
+}
+
+/* 툴바 버튼 포커스 시 그림자 제거 */
+.fc .fc-toolbar-chunk .fc-button:focus {
+    box-shadow: none;
+    color:black;
+    margin:0;
+    border:0;
+    padding:0;
+    background-color: transparent;
+}
+
+/* 툴바 버튼 시 배경색 변경 */
+.fc .fc-toolbar-chunk .fc-button {
+    background-color: lightgray;
+    color:black;
+    padding:0;
+    padding-bottom: 2px;
+}
+
+/* 툴바 버튼 hover 시 배경색 변경 */
+.fc .fc-toolbar-chunk .fc-button:hover {
+    /* font-weight: bolder;
+    font-size: 16px; */
+}
+
+/* 날짜변경 화살표 아이콘 */
+.fc .fc-button-primary span {
+    /* font-weight: 500;
+    font-size: 28px; */
+}
+
+/* 요일의 높이 */
+.fc-theme-standard th {
+    height: 30px;
+    background: #f5f5f5;
+    border: 1px solid #e8e8e8;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 19px;
+    color: #7b7b7b;
+    vertical-align: middle;
+}
+
+/* Tody Cell에 배경색 주기 */
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: #e6895724;
+}
+
+/* 날짜 Cell 프레임 */
+.fc .fc-daygrid-day-frame {
+    padding: 5px;
+    font-size: 10px;
+    height: 85px;
+}
+
+/* 월간,주간 view의 Cell이 시작하는 위치 */
+.fc .fc-daygrid-day-top {
+    flex-direction: row;
+    height: 30px;
+    margin-bottom: 3px;
+}
+
+/* 날짜 숫자 z-index 초기화 */
+.fc .fc-daygrid-day-number {
+    z-index: auto !important;
+}
+
+/* 이벤트 막대 스타일 */
+.fc-event {
+    background-color: darkgray;
+    color:black;
+    padding: 3px;
+    border:0px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 8px;
+    width: 100%;
+}
+.fc-event-title-container {
+    background-color: darkgray;
+    color:black;
+    padding: 0;
+    text-align: center;
+}
+.fc-event-title{
+    background-color: darkgray;
+}
+
+.sche-types{
+    position: absolute;
+    top:111.5px;
+    right:48px;
+    
+    background-color: transparent;
+
+}
+
+.sche-type-container{
+    width : 27px;
+    height: 27px;
+    border-radius: 100%;
+    border-radius: 50%;
+    padding : 7px;
+    background-color:darkgray;
+}
+
+.sche-type-container:hover{
+    background-color:rgb(107 114 128);
+    border : 1px gray solid;
+}
+
+.sche-type-container:hover .sche-type{
+    background-color:rgb(106, 106, 106);
+}
+
+.sche-type{
+    width: 100%;
+    height:100%;
+    
+    background-color:darkgray;
+}
+
+.type-active{
+    background-color:rgb(106, 106, 106);
+}
