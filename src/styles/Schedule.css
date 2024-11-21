@@ -253,7 +253,7 @@
 .fc-daygrid-block-event{
     width:100%;
     border-radius:3px;
-    padding : 3px 5px;
+    padding : 0px 0px;
 }
 
 /* 일별 이벤트 2개까지, oveflow 발생 시 관리*/
@@ -281,7 +281,7 @@
     /* box-sizing: initial; */
 }
 .fc-popover-body .fc-daygrid-event-harness .fc-event-main{
-    width:fit-content;
+    width:100%;
 }
 .fc-popover-title{
     padding: 8px;
@@ -299,13 +299,15 @@
 
 /*달력 이벤트 관리*/
 .fc-event-main{
-    width: 100%;
+    width: 100px;
     background-color: inherit;
     margin:0;
+    
     /* margin-right: 5px; */
 }
 
 .fc-h-event .fc-event-main{
+    width: 100%;
     color:black;
     background-color: inherit;
 }
@@ -314,16 +316,26 @@
     background-color: rgb(169, 169, 169);
 }
 
-.event-favorite-starP{
-    height: '12px';
+.event-favorite-star{
+    font-size: 15px;
+    padding-bottom: 3.5px;
+    box-sizing: border-box;
     background-color: inherit;
 }
 
+.favorite{
+    background-color: green;
+}
+
 .cal-custom-event{
-    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    width:100%;
     background-color: inherit;
     text-align: left;
     overflow: scroll;
+    padding:0px 5px;
+    margin:auto;
 }
 
 .custom-event{
@@ -337,10 +349,13 @@
 
 .cal-custom-event .event-title{
     background-color: inherit;
-    padding:0;
+    padding-top:6px;
     color:black;
 }
 
+.event-title{
+    margin-right: 5px;
+}
 
 /*다음달 날짜 삭제*/
 .fc-day-other-month {
@@ -349,7 +364,10 @@
 
 
 /*리스트 부분*/
-.fc-list-day, .fc-list-event-time, .fc-list-event-graphic{
+.fc-list-day.fc-day.fc-day-tue.fc-day-past{
+    display: hidden;
+}
+.fc-list-event-time, .fc-list-event-graphic{
     display: none;
 }
 
@@ -367,6 +385,30 @@ tr, th, td{
     border: 0;
 }
 
+.event-date{
+    padding-top: 5px;
+    text-align:right;
+}
+
+.fc-list-event-title{
+    border:0;
+}
+
+.fc-list-event{
+    border : 0;
+
+}
+
+tr, th, td ::before, ::after{
+    border : 0px;
+    border-color: transparent;
+}
+
+.fc-theme-standard fd, .fc-theme-standard fh{
+    border : 0px;
+    border-color: transparent;
+
+}
 
 /*스케줄 형식 변환 : 캘랜더, 리스트형태*/
 
