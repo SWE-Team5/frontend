@@ -162,8 +162,8 @@ function Schedule(){
     
       };
 
-    const favorites = location.state.favorites;
-    const [selectedFavorites, setSelectedFavorites] = useState(favorites ? favorites : {});
+    // const favorites = location.state.favorites ? location.state.favorites:{};
+    const [selectedFavorites, setSelectedFavorites] = useState({});
   
     // 별표 클릭 시 상태 업데이트 함수
     const toggleFavorite = (eventId) => {

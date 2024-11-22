@@ -12,11 +12,13 @@ import scheduleIcon from "../assets/images/schedule_icon.png";
 import scrapIcon from "../assets/images/scrap_icon.png";
 
 import {useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function Home({student_data}){
 
   const [count, setCount] = useState(180);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -96,7 +98,7 @@ function Home({student_data}){
             <div className="absolute bottom-16 w-full bg-transparent">
                 <div className="flex justify-start space-x-3 h-16 px-4 mx-3 mt-10 box-border bg-neutral-200 rounded-lg shadow-lg">
                     <div className={`flex-none ${styles.shortcut} w-fit p-2 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
-                        <img className="bg-transparent" src={scheduleIcon} width="25px" height="25px"/>
+                        <img className="bg-transparent" src={scheduleIcon} width="25px" height="25px" onClick={()=>navigate("/schedule")}/>
                     </div>
                     <div className={`flex-none ${styles.shortcut} w-fit px-2 py-1.5 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
                         <img className="bg-transparent" src={scrapIcon} width="25px" height="25px"/>

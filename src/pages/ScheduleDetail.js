@@ -56,6 +56,26 @@ function ScheduleDetail({}){
         navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark }});
     };
 
+    const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
+
+    // 정렬 핸들러
+    const handleSort = () => {
+        const sorted = [...sortedNotices].sort((a, b) => {
+        if (isAscending) return b.title.localeCompare(a.title); // 내림차순
+        return a.title.localeCompare(b.title); // 오름차순
+        });
+        setSortedNotices(sorted);
+        setIsAscending(!isAscending); // 정렬 상태 토글
+    };
+
+    const markAllRead = () => {
+        console.log("markAllRead")
+        setSortedNotices((prevNotices) => {
+            const updatedNotices = prevNotices.map((notice, i) => ({title: notice.title, read: 1, url: notice.url}));            // 변경된 배열 다시 정렬            
+            console.log('updatedNotices',updatedNotices);
+            return updatedNotices;
+        });
+    }
 
     return(
        <div className="relative w-full h-full bg-white">
@@ -94,14 +114,14 @@ function ScheduleDetail({}){
                         <div className="mt-9 line"></div>
 
                         <div className="flex flex-row justify-between mt-2 sub_func w-full">
-                            <div className="flex-none text-xs mt-1 pt-1">
-                                <span className="inline-block float-left">정렬</span>
+                            <div className="flex-none text-xs mt-1 pt-1 cursor-pointer" onClick={handleSort}>
+                                <span className="inline-block float-left" >정렬</span>
                                 <img className="inline-block float-left" src={sort} width="17px" height="17px" />
                             </div>
                             <div className="flex-auto"></div>
                             <div className="flex-none">
-                                <button className="alarm_del">공지 삭제</button>
-                                <button className="mark_read justify-items-end">Mark All Read</button>
+                                {/* <button className="alarm_del">공지 삭제</button> */}
+                                <button className="mark_read justify-items-end" onClick={markAllRead}>Mark All Read</button>
                             </div>
                         </div>
 
@@ -109,14 +129,17 @@ function ScheduleDetail({}){
                             { sortedNotices.map((notice, idx)=>{
                                 const isMarked = selectedMark[idx];
                                 return(
-                                    <div className="flex flex-row gap-1 justify-between notice w-full" style={{backgroundColor: notice.read ? "darkgray" : "lightgray"}} key={idx}
-                                     onClick={()=>{eventClickHandler(notice, idx)}}>
-                                        <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
-                                        <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 
-                                          style={{boxSizing:"border-box", backgroundColor:"inherit", color: isMarked ? 'red' : 'gray'}}
-                                          onClick={(event)=>{event.stopPropagation();toggleMark(idx)}}>
-                                          <IoBookmarkSharp className="bg-inherit align-middle h-full m-auto pt-1" />
-                                        </div> 
+                                    <div className="w-full">
+                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "darkgray" : "lightgray"}} key={idx}
+                                        onClick={()=>{eventClickHandler(notice, idx)}}>
+                                            <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
+                                            <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 
+                                            style={{boxSizing:"border-box", backgroundColor:"inherit", color: isMarked ? 'red' : 'gray'}}
+                                            onClick={(event)=>{event.stopPropagation();toggleMark(idx)}}>
+                                            <IoBookmarkSharp className="bg-inherit align-middle h-full m-auto pt-1" />
+                                            </div> 
+                                        </div>
+                                        
                                     </div>
                                 )
                             }) }

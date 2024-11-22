@@ -80,6 +80,11 @@
     background-color: lightgray;
 }
 
+.mark_read:hover{
+    background-color: rgb(9, 83, 143);
+    color:white;
+    font-weight: bold;
+}
 
 .notices{
     margin-left: 3px;
