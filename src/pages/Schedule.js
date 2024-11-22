@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import "../styles/Schedule.css";
 
 import { FaCircleCheck } from "react-icons/fa6";
+import { FaStar } from "react-icons/fa";
 
 import table from "../assets/images/table.png";
 import list from "../assets/images/list.png";
@@ -167,6 +168,7 @@ function Schedule(){
   
     // 별표 클릭 시 상태 업데이트 함수
     const toggleFavorite = (eventId) => {
+      console.log("togglefavor", eventId)
       setSelectedFavorites((prevState) => ({
         ...prevState,
         [eventId]: !prevState[eventId], // 해당 이벤트의 별표 상태를 반전시킴
@@ -230,8 +232,10 @@ function Schedule(){
                   <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
                       {event.title}
                   </div>
-                  <div className="flex-none event-favorite align-middle" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation(); toggleFavorite(arg.event.id)}}>
-                      <span className="event-favorite-star align-middle" style={{paddingBottom:"5px" ,boxSizing:"border-box", backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>&#9733;</span> {/* 별표 아이콘 */}
+                  <div className="flex-none event-favorite align-middle my-auto pb-1" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id)}}>
+                      <span className="event-favorite-star align-middle my-auto bg-inherit " style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
+                        <FaStar className="bg-inherit my-auto"/>
+                      </span> {/* 별표 아이콘 */}
                   </div>
               </div>
               
@@ -242,9 +246,11 @@ function Schedule(){
           return(
           // <Link className="w-full p-0" to={{pathname:event.notice ? "/scheduleDetail":"", state:{notice : arg.event.notice ? arg.event.notice : "", title : event.title}}}>
           <div className={`flex flex-row cal-custom-event`} style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'darkgray'}}>
-              <div className="flex-auto event-title bg-inherit" style={{fontSize:'9.5px'}}>{arg.event.title}</div>
-              <div className="flex-none event-favorite bg-inherit" onClick={(event) => {event.stopPropagation(); toggleFavorite(arg.event.id)}}>
-                  <div className="event-favorite-star bg-inherit" style={{ fontSize:"17px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>&#9733;</div> {/* 별표 아이콘 */}
+              <div className="flex-auto event-title bg-inherit p-1.5" style={{fontSize:'9.5px', backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}}>{event.title}</div>
+              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id)}}>
+                  <div className="event-favorite-star bg-inherit my-auto" style={{ fontSize:"15px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
+                    <FaStar className="bg-inherit my-auto" />
+                  </div> {/* 별표 아이콘 */}
               </div>
           </div>
           // </Link>
@@ -293,6 +299,8 @@ function Schedule(){
                         prev: "chevron-left",
                         next: "chevron-right",
                     }}
+                    showNonCurrentDates={false}
+                    fixedWeekCount={false} 
                     views={{
                             dayGridMonth: {
                             dayMaxEventRows: 0,
@@ -304,14 +312,14 @@ function Schedule(){
                                 const viewStart = arg.view.currentStart; // 현재 View의 시작일
                                 const currentMonth = viewStart.getMonth(); // 현재 월
                     
-                                console.log(arg.date, currentMonth, arg.date.getMonth() !== currentMonth);
+                                console.log("arg",arg, currentMonth, arg.date.getMonth());
                                 // 이번 달의 날짜가 아닌 날짜들은 숨긴다.
                                 if (arg.date.getMonth() !== currentMonth) {
                                   const startOfWeek = new Date(arg.date); 
                                   startOfWeek.setDate(arg.date.getDate() - arg.date.getDay()); // 해당 날짜의 주 첫 번째 날(일요일)을 찾음
                                   const endOfWeek = new Date(startOfWeek);
                                   endOfWeek.setDate(startOfWeek.getDate() + 6); // 해당 날짜의 주 마지막 날(토요일)
-                                  console.log(arg.date, startOfWeek, endOfWeek);
+                                  console.log("arg.date",arg.date, startOfWeek, endOfWeek);
 
                                   // startOfWeek가 현재 월과 같은 주에 속하는지 확인
                                   const sameWeek = startOfWeek.getMonth() == currentMonth || endOfWeek.getMonth() == currentMonth;

@@ -269,7 +269,7 @@
 
 .fc-popover.fc-more-popover{
     width: 230px;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 .fc-more-popover-misc{
     display: none;
@@ -324,6 +324,7 @@
     padding-bottom: 3.5px;
     box-sizing: border-box;
     background-color: inherit;
+    pointer-events: auto;
 }
 
 .favorite{
