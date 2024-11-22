@@ -9,6 +9,7 @@ import list from "../assets/images/list.png";
 import {useState, useEffect, useMemo} from "react";
 
 import React, { Component } from 'react';
+import { useNavigate, Link, useLocation} from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
@@ -16,25 +17,31 @@ import listPlugin from '@fullcalendar/list';
 
 function Schedule(){
 
-    const [type, setType] = useState('Calendar');
+    // const [type, setType] = useState('Calendar');
     const [currentViewRange, setCurrentViewRange] = useState({ start: null, end: null });
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    const eventClickHandler = (info) => {
+      console.log("click", info.event.extendedProps);
+      // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
+      if(info.event.extendedProps.notice.length > 0)
+        navigate("/schedule/detail", {state:{ title:info.event.title, notice: info.event.extendedProps.notice, selectedFavorites: selectedFavorites }});
+    };
 
     const todos = [
         {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: []},
         {id:2, title: '2학기 개강', start:'2024-03-04', notice:[]},
         {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07',
-          notice: ['2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)',
-            '2024학년도 2학기 학사과정 조기졸업 신청 안내',
-            '2024년 금신사랑장학생 선발 안내',
+          notice: [{title : '2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)', read : 1, url : ""},
+            {title:'2024학년도 2학기 학사과정 조기졸업 신청 안내', read : 0, url : "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=119786&article.offset=0&articleLimit=10&srSearchVal=2024%EB%85%84+%EC%97%AC%EB%A6%84+%EC%A0%84%EC%B2%B4+%ED%95%99%EC%9C%84%EC%88%98%EC%97%AC%EC%8B%9D+%EC%B0%B8%EC%84%9D%28%EC%8B%A0%EC%B2%AD%29+%EC%95%88%EB%82%B4"},
+            {title:'2024년 금신사랑장학생 선발 안내', read : 1, url : ""},
           ]
         },
         {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07',
           notice: []
         },
         
-        // {title: , date:};
-        // {title: , date:};
 
     ];
 
@@ -92,6 +99,7 @@ function Schedule(){
             ...event,
             start: new Date(event.start),
             end: new Date(event.end),
+            notice: event.notice,
             showDate: group.isFirstOutput || idx === 0, // 첫 번째 출력 시만 날짜 표시
           }));
         });
@@ -130,32 +138,6 @@ function Schedule(){
 
       const transformedEvents = transformEvents(fullCalendarEvents);
 
-    //   console.log(transformedEvents);
-
-    //   console.log(groupedEvents, fullCalendarEvents)
-
-    // const listViewEventContent = (arg)=>{
-    //     if (arg.view.type === 'listMonth') {
-    //         return (
-    //           <div className="custom-event flex flex-row">
-    //                 <div className="flex-none event-date">
-    //                     {`${arg.event.start.getDate()}일${arg.event.end ? '-' + arg.event.end.getDate() + '일' : ''}(${arg.event.start.toLocaleDateString('ko-KR', {
-    //                     weekday: 'short',
-    //                     })})`}
-    //                 </div>
-    //                 <div className="flex-auto event-title">
-    //                     {arg.event.title}
-    //                 </div>
-    //           </div>
-    //         )
-    //     }
-    //     else{
-    //         return(<div className="cal-custom-event">
-    //                 <span className="event-title">{arg.event.title}</span>
-    //         </div>)
-    //     }
-    // }
-
     // 현재 보이는 월을 기준으로 이벤트 필터링
     const filterEventsForCurrentViewMonth = (events) => {
         if (!currentViewRange.start || !currentViewRange.end) {
@@ -178,14 +160,10 @@ function Schedule(){
             end: arg.view.currentEnd
         });
     
-        // if (view.type === "dayGridMonth") {
-        //   setCurrentEvents(filterEventsForCurrentViewMonth(fullCalendarEvents));
-        // } else if (view.type === "listMonth") {
-        //   setCurrentEvents(filterEventsForCurrentViewMonth(transformedEvents));
-        // }
       };
 
-    const [selectedFavorites, setSelectedFavorites] = useState({});
+    const favorites = location.state.favorites;
+    const [selectedFavorites, setSelectedFavorites] = useState(favorites ? favorites : {});
   
     // 별표 클릭 시 상태 업데이트 함수
     const toggleFavorite = (eventId) => {
@@ -195,37 +173,37 @@ function Schedule(){
       }));
     };
 
-  // 리스트 일정에서 출력한 이벤트
-//   const [eventIdSet, setEventIdSet] = useState([]);
+    // 리스트 일정에서 출력한 이벤트
+    //   const [eventIdSet, setEventIdSet] = useState([]);
 
-  const handleViewChange = (view) => {
-    // FullCalendar에서 뷰가 변경될 때마다 상태를 초기화
-    if (view.type === 'dayGridMonth' || view.type === 'listMonth') {
-        // setEventIdSet([]); // 상태 초기화
-    }
-  };
+    const handleViewChange = (view) => {
+      // FullCalendar에서 뷰가 변경될 때마다 상태를 초기화
+      if (view.type === 'dayGridMonth' || view.type === 'listMonth') {
+          // setEventIdSet([]); // 상태 초기화
+      }
+    };
 
-  const updatedEventIdSet = [];
+    const updatedEventIdSet = [];
 
-  const listViewEventContent = (arg) => {
-    const { event } = arg;
-    const isFavorite = selectedFavorites[arg.event.id];  // 해당 이벤트가 관심 목록에 있는지 확인
+    const listViewEventContent = (arg) => {
+      const { event } = arg;
+      const isFavorite = selectedFavorites[arg.event.id];  // 해당 이벤트가 관심 목록에 있는지 확인
 
-    // console.log(arg.event.id, selectedFavorites);
-    // 이벤트가 여러 날짜에 걸쳐 있는지 확인하고 날짜 범위를 표시
-    const startDate = event.start.toLocaleDateString('ko-KR', {
-    //   month: 'numeric',
-      day: 'numeric',
-      weekday: 'short', // 요일 추가
-    }).replace(' ', '');
+      console.log(event.extendedProps.notice, selectedFavorites);
+      // 이벤트가 여러 날짜에 걸쳐 있는지 확인하고 날짜 범위를 표시
+      const startDate = event.start.toLocaleDateString('ko-KR', {
+      //   month: 'numeric',
+        day: 'numeric',
+        weekday: 'short', // 요일 추가
+      }).replace(' ', '');
 
-    const endDate = event.end
-      ? event.end.toLocaleDateString('ko-KR', {
-        //   month: 'numeric',
-          day: 'numeric',
-          weekday: 'short', // 요일 추가
-        }).replace(' ', '')
-      : startDate;
+      const endDate = event.end
+        ? event.end.toLocaleDateString('ko-KR', {
+          //   month: 'numeric',
+            day: 'numeric',
+            weekday: 'short', // 요일 추가
+          }).replace(' ', '')
+        : startDate;
 
       
   
@@ -241,92 +219,53 @@ function Schedule(){
             }
       }
 
-    if (arg.view.type === 'listMonth') {
-        // console.log(arg.event.extendedProps.showDate)
-        return (
-        <div className="custom-event flex flex-row py-0">
-            {/* <div className="flex-none event-date w-20 pr-4">
-                {`${arg.event.extendedProps.showDate ? startDate == endDate ? startDate : startDate + '-' + endDate : ""}`}
-            </div> */}
-            <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'green' : 'darkgray', borderRadius:'3px'}}>
-                <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'green' : 'inherit'}}>
-                    {event.title}
-                </div>
-                <div className="flex-none event-favorite align-middle" style={{ backgroundColor:isFavorite ? 'green' : "inherit"}} onClick={() => toggleFavorite(arg.event.id)}>
-                    <span className="event-favorite-star align-middle" style={{paddingBottom:"5px" ,boxSizing:"border-box", backgroundColor:isFavorite ? 'green' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>&#9733;</span> {/* 별표 아이콘 */}
-                </div>
-            </div>
-            
-        </div>
-        );}
-        else{
-            return(<div className={`flex flex-row cal-custom-event`} style={{backgroundColor: isFavorite ? 'green' : 'inherit'}}>
-                <div className="flex-auto event-title bg-inherit">{arg.event.title}</div>
-                <div className="flex-none event-favorite bg-inherit" onClick={() => toggleFavorite(arg.event.id)}>
-                    <div className="event-favorite-star bg-inherit" style={{ fontSize:"17px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'green' : 'inherit'}}>&#9733;</div> {/* 별표 아이콘 */}
-                </div>
-            </div>)
-        }
-   };
+      if (arg.view.type === 'listMonth') {
+          return (
+          // <Link className="w-full p-0"  to={{pathname:event.extendedProps.notice ? "/scheduleDetail":"", state:{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}}>
+          // <Link className="w-full p-0"  to={event.extendedProps.notice ? "/scheduleDetail":""} state={{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}>
+          
+          <div className="custom-event flex flex-row py-0" >
+
+              <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'darkgray', borderRadius:'3px'}}>
+                  <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
+                      {event.title}
+                  </div>
+                  <div className="flex-none event-favorite align-middle" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation(); toggleFavorite(arg.event.id)}}>
+                      <span className="event-favorite-star align-middle" style={{paddingBottom:"5px" ,boxSizing:"border-box", backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>&#9733;</span> {/* 별표 아이콘 */}
+                  </div>
+              </div>
+              
+          </div>
+          // </Link>
+      )}
+      else{
+          return(
+          // <Link className="w-full p-0" to={{pathname:event.notice ? "/scheduleDetail":"", state:{notice : arg.event.notice ? arg.event.notice : "", title : event.title}}}>
+          <div className={`flex flex-row cal-custom-event`} style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'darkgray'}}>
+              <div className="flex-auto event-title bg-inherit" style={{fontSize:'9.5px'}}>{arg.event.title}</div>
+              <div className="flex-none event-favorite bg-inherit" onClick={(event) => {event.stopPropagation(); toggleFavorite(arg.event.id)}}>
+                  <div className="event-favorite-star bg-inherit" style={{ fontSize:"17px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>&#9733;</div> {/* 별표 아이콘 */}
+              </div>
+          </div>
+          // </Link>
+        )
+      }
+    };
 
 
     return(
        <div className="relative w-full h-full bg-white">
             <Header page="Schedule"/>
+            <div className="line"></div>
             
-            <div className="flex justify-between space-x-1 text-center home_tabs bg-white">
+            {/* <div className="flex justify-between space-x-1 text-center home_tabs bg-white">
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-blue-900 id_tab cursor-pointer">신분증</button>
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-zinc-300 kingo_tab cursor-pointer">KINGO ⓘ</button>
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-zinc-300 favor_tab cursor-pointer">즐겨찾기</button>
-            </div>
+            </div> */}
 
             <div id="calender-container" className="h-fit m-3 mb-5 rounded-lg shadow-lg">
-                {/* <div className="sche-types w-10 flex flex-row block h-10 "> 
-                    <div className={`flex-none z-10  sche-type-container mr-2 cursor-pointer ${type == 'Calendar' ? "type-active" : ""} `} onClick={()=>{setType('Calendar'); console.log(type);}}>
-                         <img className={`sche-type ${type == 'Calendar' ? "type-active" : ""}`} src={table}  width={"33px"} height={"33px"} />
-                    </div>    
-                    <div className={`flex-none z-10 sche-type-container cursor-pointer ${type == 'List' ? "type-active" : ""}`} onClick={()=>{setType('List'); console.log(type);}} >
-                        <img className={`sche-type  ${type == 'List' ? "type-active" : ""}`} src={list} width={"33px"} height={"33px"}/>
-                    </div>     
-                </div> */}
-               
-               {/* <FullCalendar 
-                    className="block"
-                    defaultView="dayGridMonth" 
-                    plugins={[listPlugin, dayGridPlugin ]}
-                    titleFormat={{month:'long'}}
-                    height={'auto'}
-                    contentHeight={600}
-                    handleWindowResize={'true'}
-                    dragScroll={'true'}
-                    listDayFormat={{ weekday: 'short', day: 'numeric', month: 'short' }} // 월/일(요일) 형식
-                    listDaySideFormat={false}
-                    eventContent={(arg)=>{listViewEventContent(arg);}}
-                    headerToolbar={{
-                        start:"prev title next",
-                        center:"",
-                        end:"listMonth, dayGridMonth "
-                    }}
-                    buttonIcons={{
-                        prev: 'chevron-left',
-                        next: 'chevron-right',
-                    }}
-
-                    views={{ 
-                        dayGridMonth: { 
-                          dayMaxEventRows: 3, 
-                          buttonText: ' ' 
-                        },
-                        listMonth:{
-                          buttonText: ' ' 
-                        }
-                    }}
-
-                    locale={'ko'}
-                    events={todos}
-                /> */}
-               
-               
+                  
                <FullCalendar
                     className="block"
                     plugins={[listPlugin, dayGridPlugin]}
@@ -337,7 +276,7 @@ function Schedule(){
                     handleWindowResize={true}
                     dragScroll={true}
                     locale="ko"
-                    eventClick={(arg)=>{navigate("/ScheduleDetail", { notice: arg.event.notice });}}
+                    eventClick={eventClickHandler}
                     listDayFormat={{
                         weekday: "short",
                         day: "numeric",

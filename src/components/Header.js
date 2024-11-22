@@ -1,11 +1,19 @@
 import { PiList } from "react-icons/pi";
 import { IoIosSearch } from "react-icons/io";
+import { IoIosArrowBack } from "react-icons/io";
 import skkuLogo from "../assets/images/skku_logo.png";
 import skkuLogo2 from "../assets/images/skku_logo2.png";
 import chatbotIcon from "../assets/images/chatbot_icon.png";
 import noticeIcon from "../assets/images/notice_icon.png";
 
-function Header({page}){
+import { useNavigate, useLocation } from 'react-router-dom';
+
+function Header({page, title, scheduleTitle, notice, selectedFavorites, selectedMark}){
+    const navigate = useNavigate();
+
+    console.log(page, title);
+    console.log(scheduleTitle, notice);
+
     if(page == "Home"){
         return(
             <div className="flex flex-unwrap justify-between space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
@@ -27,6 +35,33 @@ function Header({page}){
             <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
                 <img className="w-fit m-0" src={skkuLogo2} alt="skku_logo" height="25px" width="" />
                 <p className="pt-1 bg-inherit text-base font-bold">2024년 학사일정표</p>
+            </div>
+        )
+    }
+    else if (page == "ScheduleDetail"){
+        return(
+            <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
+                <IoIosArrowBack className="flex-none bg-inherit mt-1" onClick={() => navigate("/schedule", {state:{favorites:selectedFavorites}})}/>
+                <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
+                    <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
+                    <p className="flex-none pt-1 bg-inherit text-base font-bold">선택 일정 관련 공지사항</p>
+                </div>
+                
+            </div>
+        )
+    }
+    else if(page == "selectedNotice"){
+        return(
+            <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 px-4 pl-2 text-3xl border-b-stone-400 bg-white">
+                <IoIosArrowBack className="flex-none bg-inherit mt-1" onClick={() => navigate("/schedule/detail", {state:{notice:notice, title:scheduleTitle, selectedMark: selectedMark}})}/>
+                <div className="flex flex-auto justify-center w-full gap-1 bg-inherit h-full">
+                    <img className="flex-none w-fit m-0" src={skkuLogo2} alt="skku_logo" height="25px" width="" />
+                    <div className="flex-auto flex flex-row bg-inherit">
+                        <div className="flex-auto pt-1 bg-inherit text-base font-bold overflow-hidden bg-inherit">{title}</div>
+                        <div className="flex-none pt-1 bg-inherit text-base font-bold overflow-hidden bg-inherit align-middle">...</div>
+                    </div>
+                </div>
+                
             </div>
         )
     }

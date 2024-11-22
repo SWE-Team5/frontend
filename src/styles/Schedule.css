@@ -1,5 +1,8 @@
 @charset "utf-8";
 
+.line{
+    border:1px lightgray solid;
+}
 
 #calendar-container {
     width: 1000px;
@@ -357,6 +360,27 @@
     margin-right: 5px;
 }
 
+.fc-daygrid-event.fc-daygrid-dot-event{
+    padding:"0px";
+    margin:"0px";
+    border: "0px";
+}
+
+.fc-list-day-cushion.fc-cell-shaded{
+    padding: 5px 14px;
+    padding-top: 6px;
+    border-bottom: 1px rgb(57, 57, 57) solid;
+}
+
+.fc-list-day-text{
+    font-weight: bolder;
+    font-size: 15px;
+}
+
+.fc-list-event-title{
+    padding:3px 14px;
+}
+
 /*다음달 날짜 삭제*/
 .fc-day-other-month {
     display: none; /* 현재 월이 아닌 날짜를 숨김 */
@@ -419,7 +443,11 @@ tr, th, td ::before, ::after{
 .fc-theme-standard fd, .fc-theme-standard fh{
     border : 0px;
     border-color: transparent;
+}
 
+.fc-daygrid-event.fc-daygrid-dot-event{
+    padding:0px;
+    margin:0px;
 }
 
 /*스케줄 형식 변환 : 캘랜더, 리스트형태*/
