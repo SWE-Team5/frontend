@@ -319,6 +319,11 @@
 
 .event-favorite{
     background-color: rgb(169, 169, 169);
+    /* z-index: 10; */
+}
+
+.event-favorite:hover{
+    background-color: darkgray;
 }
 
 .event-favorite-star{
@@ -326,6 +331,10 @@
     padding-bottom: 3.5px;
     box-sizing: border-box;
     background-color: inherit;
+    pointer-events: auto;
+}
+
+.event-title{
     pointer-events: auto;
 }
 
