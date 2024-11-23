@@ -10,7 +10,7 @@ import SelectedNotice from './pages/selectedNotice.js';
 
 function App() {
   return (
-    <div className="App w-screen h-screen bg-white">
+    <div className="App w-screen h-screen bg-white" style={{maxWidth:'400px'}}>
       <BrowserRouter>                                   
         <Routes>                                            
           <Route path='/' element={<Home />} />      

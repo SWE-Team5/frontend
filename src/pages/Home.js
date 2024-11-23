@@ -112,7 +112,7 @@ function Home({student_data}){
             </div>
 
             <IoTriangleSharp className="fixed inset-x-1/2 bottom-8 bg-transparent text-lime-500"/>
-            <div className="fixed bottom-0 w-full h-9 pt-1.5 bg-lime-500 text-white font-bold cursor-pointer">
+            <div className="fixed bottom-0 w-full h-9 pt-1.5 bg-lime-500 text-white font-bold cursor-pointer" style={{maxWidth:"400px"}}>
                 WooriBank / SAMSUNG Wallet
             </div>
 

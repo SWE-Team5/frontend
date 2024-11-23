@@ -265,13 +265,27 @@
 .fc-daygrid-day-events {
     overflow: scroll;
 } */
-
+.fc-theme-standard .fc-popover{
+    background-color: #f2f2f2;
+}
+.fc-popover{
+    padding:5px 15px;
+}
+.fc .fc-popover-header {
+    background-color: #f2f2f2;
+    padding:0px;
+    padding-top: 8px;
+}
 .fc-popover.fc-more-popover{
     width: 230px;
     /* overflow: scroll; */
 }
 .fc-more-popover-misc{
     display: none;
+}
+.fc .fc-more-popover .fc-popover-body{
+    padding:10px 0px;
+    min-width: 198px;
 }
 .fc-popover-body{
     overflow: scroll;
@@ -289,9 +303,7 @@
     pointer-events: none;
 }
 .fc-popover-title{
-    padding: 8px;
-    padding-right: 10px; 
-    padding-bottom: 0px;
+    padding:0px;
     display: flex;
     justify-content: space-between;
 }

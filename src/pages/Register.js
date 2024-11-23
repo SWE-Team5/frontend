@@ -59,7 +59,7 @@ function Register({ onBack }) {
   };
 
   return (
-    <div className="bg-gray-50 h-screen">
+    <div className="relative w-full h-full bg-gray-50 " style={{maxWidth:"400px"}}>
       {/* Header Section */}
       <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
         <IoIosArrowBack
