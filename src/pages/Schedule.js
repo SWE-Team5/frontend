@@ -23,28 +23,21 @@ function Schedule(){
     const navigate = useNavigate();
     const location = useLocation();
 
-    const eventClickHandler = (info) => {
-      console.log("click", info.event.extendedProps);
-      // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-      if(info.event.extendedProps.notice.length > 0)
-        navigate("/schedule/detail", {state:{ title:info.event.title, notice: info.event.extendedProps.notice, selectedFavorites: selectedFavorites }});
-    };
 
-    const todos = [
-        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: []},
-        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[]},
+
+    const [todos, setTodos] = useState([
+        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: [], new: 0},
+        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[], new: 0},
         {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07',
           notice: [{title : '2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)', read : 1, url : ""},
             {title:'2024학년도 2학기 학사과정 조기졸업 신청 안내', read : 0, url : "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=119786&article.offset=0&articleLimit=10&srSearchVal=2024%EB%85%84+%EC%97%AC%EB%A6%84+%EC%A0%84%EC%B2%B4+%ED%95%99%EC%9C%84%EC%88%98%EC%97%AC%EC%8B%9D+%EC%B0%B8%EC%84%9D%28%EC%8B%A0%EC%B2%AD%29+%EC%95%88%EB%82%B4"},
             {title:'2024년 금신사랑장학생 선발 안내', read : 1, url : ""},
           ]
-        },
+        , new:1},
         {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07',
-          notice: []
+          notice: [], new:0
         },
-        
-
-    ];
+    ]);
 
       // 날짜가 겹치는 이벤트들을 그룹화하는 함수
       const groupEventsByDate = (events) => {
@@ -91,20 +84,30 @@ function Schedule(){
         return sortedGroupedEvents;
       };
 
-    const groupedEvents = groupEventsByDate(todos);
+    const [groupedEvents, setGroupedEvents] = useState(groupEventsByDate(todos));
+
+
+    useEffect(()=>{
+      setGroupedEvents(groupEventsByDate(todos));
+    }, [todos])
 
     const fullCalendarEvents = useMemo(() => {
+        // console.log( "memo",groupedEvents)
         return Object.keys(groupedEvents).flatMap((key) => {
           const group = groupedEvents[key];
-          return group.events.map((event, idx) => ({
+          // console.log("group", group)
+          return group.events ? group.events.map((event, idx) => ({
             ...event,
             start: new Date(event.start),
             end: new Date(event.end),
             notice: event.notice,
             showDate: group.isFirstOutput || idx === 0, // 첫 번째 출력 시만 날짜 표시
-          }));
+          })):{};
         });
       }, [groupedEvents]);
+
+      console.log('todos',todos, groupedEvents, fullCalendarEvents)
+
 
       const transformEvents = (events) => {
         const groupedEvents = {};
@@ -136,7 +139,7 @@ function Schedule(){
           };
         });
       };
-
+      
       const transformedEvents = transformEvents(fullCalendarEvents);
 
     // 현재 보이는 월을 기준으로 이벤트 필터링
@@ -162,6 +165,19 @@ function Schedule(){
         });
     
       };
+
+    const eventClickHandler = (info) => {
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo.id === info.event.id ? { ...todo, new: 0 } : todo
+        )
+      );
+
+      console.log("click", info.event.extendedProps);
+      // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
+      if(info.event.extendedProps.notice.length > 0)
+        navigate("/schedule/detail", {state:{ title:info.event.title, notice: info.event.extendedProps.notice, selectedFavorites: selectedFavorites }});
+    };
 
     // const favorites = location.state.favorites ? location.state.favorites:{};
     const [selectedFavorites, setSelectedFavorites] = useState({});
@@ -226,14 +242,14 @@ function Schedule(){
           // <Link className="w-full p-0"  to={{pathname:event.extendedProps.notice ? "/scheduleDetail":"", state:{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}}>
           // <Link className="w-full p-0"  to={event.extendedProps.notice ? "/scheduleDetail":""} state={{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}>
           
-          <div className="custom-event flex flex-row py-0" >
+          <div className={`custom-event flex flex-row py-0 ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`}>
 
-              <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'darkgray', borderRadius:'3px'}}>
+              <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)': event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
                   <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
-                      {event.title}
+                      {event.title} <p className=" bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</p>
                   </div>
-                  <div className="flex-none event-favorite align-middle my-auto pb-1" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id)}}>
-                      <span className="event-favorite-star align-middle my-auto bg-inherit " style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
+                  <div className="flex-none event-favorite align-middle my-auto" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id)}}>
+                      <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
                         <FaStar className="bg-inherit my-auto"/>
                       </span> {/* 별표 아이콘 */}
                   </div>
@@ -245,10 +261,13 @@ function Schedule(){
       else{
           return(
           // <Link className="w-full p-0" to={{pathname:event.notice ? "/scheduleDetail":"", state:{notice : arg.event.notice ? arg.event.notice : "", title : event.title}}}>
-          <div className={`flex flex-row cal-custom-event`} style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'darkgray'}}>
-              <div className="flex-auto event-title bg-inherit p-1.5" style={{fontSize:'9.5px', backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}}>{event.title}</div>
-              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id)}}>
-                  <div className="event-favorite-star bg-inherit my-auto" style={{ fontSize:"15px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
+          <div className={`flex flex-row cal-custom-event ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`} style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray'}}>
+              <div className="flex-auto event-title bg-inherit p-1.5" style={{fontSize:'9.5px', backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}}>
+                {event.title} 
+                {/* <p className=" bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</p> */}
+              </div>
+              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={() => {toggleFavorite(arg.event.id); console.log("isFavorite",isFavorite);}}>
+                  <div className="event-favorite-star bg-inherit my-auto cursor-pointer" style={{ fontSize:"15px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
                     <FaStar className="bg-inherit my-auto" />
                   </div> {/* 별표 아이콘 */}
               </div>
@@ -299,6 +318,7 @@ function Schedule(){
                         prev: "chevron-left",
                         next: "chevron-right",
                     }}
+                    
                     showNonCurrentDates={false}
                     fixedWeekCount={false} 
                     views={{
@@ -333,7 +353,14 @@ function Schedule(){
                             },
                         },
                         listMonth: {
-                        buttonText: " ", // 버튼 텍스트 설정
+                          buttonText: " ",
+                          dayHeaderContent : (arg) => {
+                              // '일(요일)' 형식으로 변경
+                              return new Date(arg.date).toLocaleDateString('ko-KR', {
+                                  day: 'numeric',
+                                  weekday: 'short',
+                              });
+                          }, // 버튼 텍스트 설정
                         },
                     }}
                     events={filterEventsForCurrentViewMonth(fullCalendarEvents)} // 현재 보이는 월에 해당하는 이벤트만 필터링

@@ -240,7 +240,6 @@
     margin-bottom: 5px;
     border-radius: 4px;
     font-weight: 500;
-    cursor: pointer;
     font-size: 8px;
     width: 100%;
 }
@@ -285,6 +284,9 @@
 }
 .fc-popover-body .fc-daygrid-event-harness .fc-event-main{
     width:100%;
+}
+.fc-daygrid-event-harness a{
+    pointer-events: none;
 }
 .fc-popover-title{
     padding: 8px;
@@ -414,6 +416,11 @@
     padding-bottom: 0px;
 }
 
+.fc-list-day-cushion.fc-cell-shaded{
+    text-align: left;
+    font-weight: bolder;
+}
+
 tr, th, td{
     border: 0;
 }
@@ -450,6 +457,19 @@ tr, th, td ::before, ::after{
     padding:0px;
     margin:0px;
 }
+
+.fc-list-day-cushion::after {
+    display: none !important; /* 구분선을 숨김 */
+}
+
+.fc-list-event-cushion::after {
+    display: none !important; /* 이벤트 구분선 숨김 */
+}
+
+.fc-list-sticky {
+    border: none !important; /* 추가적으로 border도 없앰 */
+}
+
 
 /*스케줄 형식 변환 : 캘랜더, 리스트형태*/
 
