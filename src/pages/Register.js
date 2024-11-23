@@ -155,23 +155,27 @@ function Register({ onBack }) {
                   filteredNotices.map((notice, index) => (
                     <li
                       key={index}
-                      className="p-2 border rounded-md bg-gray-100 flex justify-between"
+                      className="flex p-2 border rounded-md bg-gray-200 flex justify-between"
                     >
                       <span
-                        className="cursor-pointer"
+                        className="flex-auto cursor-pointer bg-inherit"
                         onClick={() => handleNoticeClick(notice.url)}
                       >
                         {notice.title}
                       </span>
-                      <IoBookmarkSharp
-                        size={20}
-                        className={`cursor-pointer ${
-                          itemColors[index] === "red"
-                            ? "text-red-500"
-                            : "text-gray-500"
-                        }`}
-                        onClick={() => toggleIconColor(index)}
-                      />
+                      <div className="flex-none my-auto bg-inherit">
+                        <IoBookmarkSharp
+                          size={20}
+                          className={`bg-inherit cursor-pointer ${
+                            itemColors[index] === "red"
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }`}
+                          style={{width:"20px"}}
+                          onClick={() => toggleIconColor(index)}
+                        />
+                      </div>
+                      
                     </li>
                   ))
                 )}
