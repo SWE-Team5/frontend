@@ -83,10 +83,10 @@ function Register({ onBack }) {
           <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
             <IoIosArrowBack
               size={24}
-              className="cursor-pointer"
+              className="cursor-pointer bg-white"
               onClick={onBack}
             />
-            <h1 className="text-lg font-semibold flex-1 text-center">
+            <h1 className="text-lg font-semibold flex-1 text-center bg-white">
               관심 공지 등록 및 확인
             </h1>
             <div className="w-6"></div>
@@ -157,6 +157,7 @@ function Register({ onBack }) {
                         {notice.title}
                       </span>
                       <IoBookmarkSharp
+                        size={20}
                         className={`cursor-pointer ${
                           itemColors[index] === "red"
                             ? "text-red-500"
