@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmarkSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
@@ -9,6 +10,8 @@ function Register({ onBack }) {
   const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const [filteredNotices, setFilteredNotices] = useState([]);
   const [clickedKeyword, setClickedKeyword] = useState(""); // State to track the clicked keyword
+
+  const navigate = useNavigate();
 
   const notices = [
     {
@@ -40,8 +43,10 @@ function Register({ onBack }) {
     setFilteredNotices(matchingNotices);
   };
 
-  const handleNavigate = (url) => {
-    window.open(url, "_blank"); // Open external links in a new tab
+  const handleNavigate = (url, title) => {
+    navigate("/schedule/detail/notice", {
+      state: { noticeURL: url, title: title },
+    });
   };
 
   const handleResetNotices = () => {
@@ -61,7 +66,7 @@ function Register({ onBack }) {
   };
 
   return (
-    <div className="relative w-full h-full bg-gray-50 " style={{maxWidth:"400px"}}>
+    <div className="bg-gray-50 h-screen">
       {/* Header Section */}
       <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
         <IoIosArrowBack
@@ -113,23 +118,6 @@ function Register({ onBack }) {
               ))}
             </ul>
           </div>
-          <div className="mt-4 flex flex-col items-center">
-            <label htmlFor="alert" className="font-medium text-xs mb-2">
-              알림 수신동의
-            </label>
-            <div
-              onClick={handleToggle}
-              className={`relative w-10 h-5 rounded-full cursor-pointer transition-colors ${
-                isAlertEnabled ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            >
-              <div
-                className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                  isAlertEnabled ? "translate-x-5" : ""
-                }`}
-              ></div>
-            </div>
-          </div>
         </div>
 
         {/* Divider */}
@@ -149,7 +137,7 @@ function Register({ onBack }) {
                 >
                   <span
                     className="cursor-pointer flex-1"
-                    onClick={() => handleNavigate(item.url)}
+                    onClick={() => handleNavigate(item.url, item.title)}
                   >
                     {item.title}
                   </span>
