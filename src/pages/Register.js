@@ -64,20 +64,27 @@ function Register({ onBack }) {
 
   return (
     <div className="bg-gray-50 h-screen">
-      {selectedNoticeURL ? (
-        // Render the ExternalPage if a notice is selected
-        <div className="h-full flex flex-col">
-          <div className="bg-white p-4 border-b border-gray-300">
-            <button
-              onClick={handleBackToNotices}
-              className="text-blue-500 text-sm"
-            >
-              &larr; Back to Notices
-            </button>
-          </div>
-          <ExternalPage url={selectedNoticeURL} />
-        </div>
-      ) : (
+     {selectedNoticeURL ? (
+  // Render the ExternalPage if a notice is selected
+  <div className="h-full flex flex-col">
+    {/* Header Section */}
+    <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
+      <IoIosArrowBack
+        size={24}
+        className="cursor-pointer bg-white"
+        onClick={handleBackToNotices} // Use handleBackToNotices to return to the notices
+      />
+      <h1 className="text-lg font-semibold flex-1 text-center bg-white">
+        관심 공지 등록 및 확인
+      </h1>
+      <div className="w-6"></div>
+    </div>
+
+    {/* External Page */}
+    <ExternalPage url={selectedNoticeURL} />
+  </div>
+) : (
+
         <div>
           {/* Header Section */}
           <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
