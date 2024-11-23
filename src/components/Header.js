@@ -36,9 +36,8 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                 <IoIosArrowBack className="flex-none bg-inherit mt-1" onClick={() => navigate("/")}/>
                 <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                     <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
-                    <p className="flex-none pt-1 bg-inherit text-base font-bold">2024학년도 학사일정표</p>
+                    <p className="flex-none pt-1 bg-inherit text-base font-bold">2024년 학사일정표</p>
                 </div>
-                
             </div>
         )
     }
