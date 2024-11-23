@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmarkSharp } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import ExternalPage from "../components/ExternalPage";
 
 function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
@@ -9,9 +9,8 @@ function Register({ onBack }) {
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const [filteredNotices, setFilteredNotices] = useState([]);
-  const [clickedKeyword, setClickedKeyword] = useState(""); // State to track the clicked keyword
-
-  const navigate = useNavigate();
+  const [clickedKeyword, setClickedKeyword] = useState("");
+  const [selectedNoticeURL, setSelectedNoticeURL] = useState(null); // New state for selected notice URL
 
   const notices = [
     {
@@ -36,21 +35,19 @@ function Register({ onBack }) {
   };
 
   const handleKeywordClick = (keyword) => {
-    setClickedKeyword(keyword); // Update the clicked keyword
+    setClickedKeyword(keyword);
     const matchingNotices = notices.filter((notice) =>
       notice.title.includes(keyword)
     );
     setFilteredNotices(matchingNotices);
   };
 
-  const handleNavigate = (url, title) => {
-    navigate("/schedule/detail/notice", {
-      state: { noticeURL: url, title: title },
-    });
+  const handleNoticeClick = (url) => {
+    setSelectedNoticeURL(url); // Set the selected notice URL
   };
 
-  const handleResetNotices = () => {
-    setFilteredNotices([]);
+  const handleBackToNotices = () => {
+    setSelectedNoticeURL(null); // Clear the selected notice URL
   };
 
   const handleToggle = () => {
@@ -67,100 +64,114 @@ function Register({ onBack }) {
 
   return (
     <div className="bg-gray-50 h-screen">
-      {/* Header Section */}
-      <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
-        <IoIosArrowBack
-          size={24}
-          className="cursor-pointer bg-white"
-          onClick={onBack}
-        />
-        <h1 className="text-lg font-semibold flex-1 text-center bg-white">
-          관심 공지 등록 및 확인
-        </h1>
-        <div className="w-6"></div>
-      </div>
+      {selectedNoticeURL ? (
+        // Render the ExternalPage if a notice is selected
+        <div className="h-full flex flex-col">
+          <div className="bg-white p-4 border-b border-gray-300">
+            <button
+              onClick={handleBackToNotices}
+              className="text-blue-500 text-sm"
+            >
+              &larr; Back to Notices
+            </button>
+          </div>
+          <ExternalPage url={selectedNoticeURL} />
+        </div>
+      ) : (
+        <div>
+          {/* Header Section */}
+          <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
+            <IoIosArrowBack
+              size={24}
+              className="cursor-pointer"
+              onClick={onBack}
+            />
+            <h1 className="text-lg font-semibold flex-1 text-center">
+              관심 공지 등록 및 확인
+            </h1>
+            <div className="w-6"></div>
+          </div>
 
-      {/* Input Section */}
-      <div className="flex items-center mt-5 mx-4">
-        <input
-          type="text"
-          value={inputKeyword}
-          onChange={(e) => setInputKeyword(e.target.value)}
-          placeholder="관심 키워드를 입력하세요."
-          className="flex-1 p-2 border border-gray-300 rounded-md shadow-sm"
-        />
-        <button
-          onClick={addKeyword}
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm"
-        >
-          등록
-        </button>
-      </div>
+          {/* Input Section */}
+          <div className="flex items-center mt-5 mx-4">
+            <input
+              type="text"
+              value={inputKeyword}
+              onChange={(e) => setInputKeyword(e.target.value)}
+              placeholder="관심 키워드를 입력하세요."
+              className="flex-1 p-2 border border-gray-300 rounded-md shadow-sm"
+            />
+            <button
+              onClick={addKeyword}
+              className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm"
+            >
+              등록
+            </button>
+          </div>
 
-      {/* Main Sections */}
-      <div className="flex mt-5 mx-4 border border-gray-300 rounded-lg h-[calc(100vh-180px)]">
-        {/* Left Section: 나의 키워드 */}
-        <div className="w-1/3 bg-gray-100 flex flex-col p-4">
-          <h2 className="font-semibold text-center border-b pb-2">나의 키워드</h2>
-          <div className="flex-1 mt-4 border border-gray-600 rounded-md bg-gray overflow-y-auto p-2 ml-1 mr-1 h-[200px]">
-            <ul className="space-y-2">
-              {keywords.map((keyword, index) => (
-                <li key={index} className="text-xs">
-                  <span
-                    className={`cursor-pointer text-black ${
-                      clickedKeyword === keyword ? "font-bold text-blue-600" : ""
-                    }`}
-                    onClick={() => handleKeywordClick(keyword)}
-                  >
-                    {keyword}
-                  </span>
-                </li>
-              ))}
-            </ul>
+          {/* Notices Section */}
+          <div className="flex mt-5 mx-4 border border-gray-300 rounded-lg h-[calc(100vh-180px)]">
+            {/* Left Section */}
+            <div className="w-1/3 bg-gray-100 flex flex-col p-4">
+              <h2 className="font-semibold text-center border-b pb-2">
+                나의 키워드
+              </h2>
+              <ul className="mt-4 space-y-2">
+                {keywords.map((keyword, index) => (
+                  <li key={index} className="text-xs">
+                    <span
+                      className={`cursor-pointer ${
+                        clickedKeyword === keyword
+                          ? "font-bold text-blue-600"
+                          : ""
+                      }`}
+                      onClick={() => handleKeywordClick(keyword)}
+                    >
+                      {keyword}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Right Section */}
+            <div className="flex-1 p-4">
+              <h2 className="font-semibold text-center border-b pb-2">
+                관련 공지
+              </h2>
+              <ul className="mt-4 space-y-2">
+                {filteredNotices.length === 0 ? (
+                  <p className="text-gray-500 text-center">
+                    관련 공지가 없습니다.
+                  </p>
+                ) : (
+                  filteredNotices.map((notice, index) => (
+                    <li
+                      key={index}
+                      className="p-2 border rounded-md bg-gray-100 flex justify-between"
+                    >
+                      <span
+                        className="cursor-pointer"
+                        onClick={() => handleNoticeClick(notice.url)}
+                      >
+                        {notice.title}
+                      </span>
+                      <IoBookmarkSharp
+                        className={`cursor-pointer ${
+                          itemColors[index] === "red"
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
+                        onClick={() => toggleIconColor(index)}
+                      />
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
           </div>
         </div>
-
-        {/* Divider */}
-        <div className="w-[1px] bg-gray-300"></div>
-
-        {/* Right Section: 관련 공지 */}
-        <div className="flex-1 p-4 flex flex-col">
-          <h2 className="font-semibold text-center border-b pb-2">관련 공지</h2>
-          <ul className="mt-4 space-y-2 overflow-y-auto flex-1 text-xs">
-            {filteredNotices.length === 0 ? (
-              <p className="text-gray-500 text-center">관련 공지가 없습니다.</p>
-            ) : (
-              filteredNotices.map((item, index) => (
-                <li
-                  key={index}
-                  className="p-2 border rounded-md bg-gray-100 flex items-center justify-between"
-                >
-                  <span
-                    className="cursor-pointer flex-1"
-                    onClick={() => handleNavigate(item.url, item.title)}
-                  >
-                    {item.title}
-                  </span>
-                  <div className="w-5 h-5 flex items-center justify-center">
-                    <IoBookmarkSharp
-                      className={`cursor-pointer ${
-                        itemColors[index] === "red" ? "text-red-500" : "text-gray-500"
-                      }`}
-                      onClick={() => toggleIconColor(index)}
-                    />
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-          <button
-            onClick={handleResetNotices}
-            className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-          >
-            초기화
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
