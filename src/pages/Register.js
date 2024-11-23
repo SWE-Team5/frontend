@@ -1,14 +1,28 @@
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
-import { AiFillFlag } from "react-icons/ai"; 
+import { IoBookmarkSharp } from "react-icons/io5";
 
-function Register({ onBack, onNavigateToPage }) {
+function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
   const [inputKeyword, setInputKeyword] = useState("");
-  const [isAlertEnabled, setIsAlertEnabled] = useState(false); // Toggle state
-  const [itemColors, setItemColors] = useState([ // Default color for all items
-    "gray", "gray", "gray", "gray"
-  ]);
+  const [isAlertEnabled, setIsAlertEnabled] = useState(false);
+  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
+  const [filteredNotices, setFilteredNotices] = useState([]);
+
+  const notices = [
+    {
+      title: "2024학년도 학사과정 겨울 계절수업 운영 안내",
+      url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122612&article.offset=0&articleLimit=10&srSearchVal=2024%ED%95%99%EB%85%84%EB%8F%84+%ED%95%99%EC%82%AC%EA%B3%BC%EC%A0%95+%EA%B2%A8%EC%9A%B8+%EA%B3%84%EC%A0%88%EC%88%98%EC%97%85+%EC%9A%B4%EC%98%81+%EC%95%88%EB%82%B4",
+    },
+    {
+      title: "[반도체소부장혁신융합대학사업단] 2024학년도 겨울계절학기 수강신청 안내",
+      url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122309&article.offset=0&articleLimit=10&srSearchVal=%EB%B0%98%EB%8F%84%EC%B2%B4%EC%86%8C%EB%B6%80%EC%9E%A5%ED%98%81%EC%8B%A0%EC%9C%B5%ED%95%A9%EB%8C%80%ED%95%99%EC%82%AC%EC%97%85%EB%8B%A8%5D+2024%ED%95%99%EB%85%84%EB%8F%84+%EA%B2%A8%EC%9A%B8%EA%B3%84%EC%A0%88%ED%95%99%EA%B8%B0+%EC%88%98%EA%B0%95%EC%8B%A0%EC%B2%AD+%EC%95%88%EB%82%B4",
+    },
+    {
+      title: "[행사/세미나] 글로벌 IT전문가와 킹고인의 만남 시즌2 쉰일곱번째 만남 참가 신청(3/28 목)",
+      url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=116546&article.offset=0&articleLimit=10&srSearchVal=%5B%ED%96%89%EC%82%AC%2F%EC%84%B8%EB%AF%B8%EB%82%98%5D+",
+    },
+  ];
 
   const addKeyword = () => {
     if (inputKeyword.trim() && !keywords.includes(inputKeyword)) {
@@ -17,8 +31,23 @@ function Register({ onBack, onNavigateToPage }) {
     setInputKeyword("");
   };
 
+  const handleKeywordClick = (keyword) => {
+    const matchingNotices = notices.filter((notice) =>
+      notice.title.includes(keyword)
+    );
+    setFilteredNotices(matchingNotices);
+  };
+
+  const handleNavigate = (url) => {
+    window.open(url, "_blank"); // Open external links in a new tab
+  };
+
+  const handleResetNotices = () => {
+    setFilteredNotices([]);
+  };
+
   const handleToggle = () => {
-    setIsAlertEnabled((prev) => !prev); // Toggle the state
+    setIsAlertEnabled((prev) => !prev);
   };
 
   const toggleIconColor = (index) => {
@@ -70,7 +99,12 @@ function Register({ onBack, onNavigateToPage }) {
             <ul className="space-y-2">
               {keywords.map((keyword, index) => (
                 <li key={index} className="text-xs">
-                  {keyword}
+                  <span
+                    className="cursor-pointer text-black"
+                    onClick={() => handleKeywordClick(keyword)}
+                  >
+                    {keyword}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -80,7 +114,7 @@ function Register({ onBack, onNavigateToPage }) {
               알림 수신동의
             </label>
             <div
-              onClick={handleToggle} // Handle click to toggle state
+              onClick={handleToggle}
               className={`relative w-10 h-5 rounded-full cursor-pointer transition-colors ${
                 isAlertEnabled ? "bg-blue-600" : "bg-gray-300"
               }`}
@@ -98,41 +132,41 @@ function Register({ onBack, onNavigateToPage }) {
         <div className="w-[1px] bg-gray-300"></div>
 
         {/* Right Section: 관련 공지 */}
-        <div className="flex-1 p-4  flex flex-col"> {/* Reduced font size */}
+        <div className="flex-1 p-4 flex flex-col">
           <h2 className="font-semibold text-center border-b pb-2">관련 공지</h2>
           <ul className="mt-4 space-y-2 overflow-y-auto flex-1 text-xs">
-            {[
-              "2024년 2학기 경제학과 3차 졸업시험 신청안내",
-              "2024학년도 2학기 수강철회 안내",
-              "[채용/공지] SKKU Global Springboard Program: CES 2025 참여",
-              "[채용/공지] 자연과학캠퍼스 근로 장학생 모집",
-            ].map((item, index) => (
-              <li
-                key={index}
-                className="p-2 border rounded-md bg-gray-100 flex items-center justify-between"
-              >
-                <span
-                  className="cursor-pointer flex-1"
-                  onClick={() => {
-                    if (index === 0) {
-                      onNavigateToPage(
-                        "https://app.skku.edu/emate_app/bbs/b1805133145.nsf/view01/F31D8C088E337BF449258BD6002C7EDB?OpenDocument&rowid=F31D8C088E337BF449258BD6002C7EDB_1&ui=webmail"
-                      );
-                    }
-                  }}
+            {filteredNotices.length === 0 ? (
+              <p className="text-gray-500 text-center">관련 공지가 없습니다.</p>
+            ) : (
+              filteredNotices.map((item, index) => (
+                <li
+                  key={index}
+                  className="p-2 border rounded-md bg-gray-100 flex items-center justify-between"
                 >
-                  {item}
-                </span>
-                <div className="w-5 h-5 flex items-center justify-center">
-                  <AiFillFlag
-                    className={`cursor-pointer ${itemColors[index] === "red" ? "text-red-500" : "text-gray-500"}`}
-                    size={16} // Fixed size for all icons
-                    onClick={() => toggleIconColor(index)}
-                  />
-                </div>
-              </li>
-            ))}
+                  <span
+                    className="cursor-pointer flex-1"
+                    onClick={() => handleNavigate(item.url)}
+                  >
+                    {item.title}
+                  </span>
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <IoBookmarkSharp
+                      className={`cursor-pointer ${
+                        itemColors[index] === "red" ? "text-red-500" : "text-gray-500"
+                      }`}
+                      onClick={() => toggleIconColor(index)}
+                    />
+                  </div>
+                </li>
+              ))
+            )}
           </ul>
+          <button
+            onClick={handleResetNotices}
+            className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+          >
+            초기화
+          </button>
         </div>
       </div>
     </div>
@@ -140,3 +174,4 @@ function Register({ onBack, onNavigateToPage }) {
 }
 
 export default Register;
+
