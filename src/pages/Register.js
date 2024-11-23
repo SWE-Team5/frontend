@@ -8,6 +8,7 @@ function Register({ onBack }) {
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const [filteredNotices, setFilteredNotices] = useState([]);
+  const [clickedKeyword, setClickedKeyword] = useState(""); // State to track the clicked keyword
 
   const notices = [
     {
@@ -32,6 +33,7 @@ function Register({ onBack }) {
   };
 
   const handleKeywordClick = (keyword) => {
+    setClickedKeyword(keyword); // Update the clicked keyword
     const matchingNotices = notices.filter((notice) =>
       notice.title.includes(keyword)
     );
@@ -100,7 +102,9 @@ function Register({ onBack }) {
               {keywords.map((keyword, index) => (
                 <li key={index} className="text-xs">
                   <span
-                    className="cursor-pointer text-black"
+                    className={`cursor-pointer text-black ${
+                      clickedKeyword === keyword ? "font-bold text-blue-600" : ""
+                    }`}
                     onClick={() => handleKeywordClick(keyword)}
                   >
                     {keyword}
@@ -174,4 +178,3 @@ function Register({ onBack }) {
 }
 
 export default Register;
-
