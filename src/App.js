@@ -7,6 +7,8 @@ import ScheduleDetail from './pages/ScheduleDetail.js';
 import Chatbot from './pages/Chatbot';
 import Register from './pages/Register';
 import SelectedNotice from './pages/selectedNotice.js';
+import Scrap from './pages/Scrap.js';
+
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path='/schedule/detail/notice' element={<SelectedNotice />} />      
           <Route path='/chatbot' element={<Chatbot />} />
           <Route path='/keywordRegister' element={<Register />} />
+          <Route path='/scrap' element={<Scrap />} />
+
         </Routes>
     </BrowserRouter>
     </div>
@@ -26,3 +30,5 @@ function App() {
 }
 
 export default App;
+
+

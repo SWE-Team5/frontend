@@ -285,9 +285,7 @@
 .fc-popover-body .fc-daygrid-event-harness .fc-event-main{
     width:100%;
 }
-.fc-daygrid-event-harness a{
-    pointer-events: none;
-}
+
 .fc-popover-title{
     padding: 8px;
     padding-right: 10px; 
