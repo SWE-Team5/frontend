@@ -140,7 +140,7 @@ function Schedule(){
         });
       };
       
-      const transformedEvents = transformEvents(fullCalendarEvents);
+    // const transformedEvents = useMemo(()=>transformEvents(fullCalendarEvents), [fullCalendarEvents]);
 
     // 현재 보이는 월을 기준으로 이벤트 필터링
     const filterEventsForCurrentViewMonth = (events) => {
@@ -154,7 +154,28 @@ function Schedule(){
         });
     };
 
-    const [currentEvents, setCurrentEvents] = useState(filterEventsForCurrentViewMonth(fullCalendarEvents));
+    const [currentEvents, setCurrentEvents] = useState(fullCalendarEvents);
+    const [currentView, setCurrentView] = useState("dayGridMonth");
+
+    const handleViewDidMount = (arg) => {
+      console.log("View Mounted:", arg.view.type);
+    
+      if (arg.view.type === "dayGridMonth") {
+        setCurrentEvents(fullCalendarEvents);
+        setCurrentView("dayGridMonth");
+      } else if (arg.view.type === "timeGridWeek") {
+        setCurrentEvents(transformEvents(fullCalendarEvents));
+        setCurrentView("timeGridWeek");
+      }
+    };
+
+    useEffect(()=>{
+      if (currentView === "dayGridMonth") {
+        setCurrentEvents(fullCalendarEvents);
+      } else if (currentView === "timeGridWeek") {
+        setCurrentEvents(transformEvents(fullCalendarEvents));
+      }
+    },[fullCalendarEvents])
 
     const handleDatesSet = (arg) => {
         const { view } = arg;
@@ -381,10 +402,10 @@ function Schedule(){
                           }, // 버튼 텍스트 설정
                         },
                     }}
-                    events={filterEventsForCurrentViewMonth(fullCalendarEvents)} // 현재 보이는 월에 해당하는 이벤트만 필터링
+                    events={filterEventsForCurrentViewMonth(currentEvents)} // 현재 보이는 월에 해당하는 이벤트만 필터링
                     datesSet={handleDatesSet} // datesSet 이벤트 핸들러 추가
-                    viewDidMount={(arg) => handleViewChange(arg.view)} // 뷰가 마운트될 때 호출
-                    viewWillUnmount={(arg) => handleViewChange(arg.view)} // 뷰가 언마운트될 때 호출
+                    viewDidMount={handleViewDidMount} // 뷰가 마운트될 때 호출
+                    // viewWillUnmount={handleViewDidMount} // 뷰가 언마운트될 때 호출
                 />
 
             </div>
