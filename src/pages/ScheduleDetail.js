@@ -77,6 +77,12 @@ function ScheduleDetail({}){
         });
     }
 
+
+    // 공지 검색 처리
+    const filteredNotices = sortedNotices.filter((notice) =>
+        notice.title.includes(content) // 제목에 검색어 포함 여부 확인
+    );
+
     return(
        <div className="relative w-full h-full bg-white">
             <Header page="ScheduleDetail" selectedFavorites={selectedFavorites} />
@@ -125,8 +131,8 @@ function ScheduleDetail({}){
                             </div>
                         </div>
 
-                        {sortedNotices.length > 0 && (<div className="flex flex-col mt-3 notices">
-                            { sortedNotices.map((notice, idx)=>{
+                        {(content ? filteredNotices.length > 0 : sortedNotices.length > 0) && (<div className="flex flex-col mt-3 notices">
+                            {(content ? filteredNotices:sortedNotices).map((notice, idx)=>{
                                 const isMarked = selectedMark[idx];
                                 return(
                                     <div className="w-full">

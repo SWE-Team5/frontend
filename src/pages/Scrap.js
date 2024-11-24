@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../styles/Scrap.css";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
+import kingoMIcon from "../assets/images/kingo-M.png";
 
 
 
@@ -75,7 +76,8 @@ function NotificationApp() {
         {/* Sidebar */}
         <aside className="sidebar">
           <div className="kingo-logo">
-            <img src="/kingo-m-logo.png" alt="KINGO-M" />
+            <img src={kingoMIcon} width={"50px"} height={"75px"} alt="KINGO-M"/>
+            <div className="iconTitle font-bold text-l relative bottom-3">KINGO-M</div>
           </div>
           <ul>
             <li 
@@ -126,19 +128,19 @@ function NotificationApp() {
             {notifications.map((notif) => (
               <li
                 key={notif.id}
-                className={`notification-item ${
+                className={`notification-item bg-inherit ${
                   notif.isNew ? "unread-notification" : "read-notification"
                 }`}
                 onClick={() => handleNotificationClick(notif)} // onClick 이벤트 추가
               >
-                <div className="notification-title">{notif.title}</div>
+                <div className="notification-title bg-inherit">{notif.title}</div>
                     
                 {notif.isNew && (
                     <span className='new-label'>new</span>
                 )}
                 
                 <div
-                  className={`notification-icon ${
+                  className={`notification-icon bg-inherit ${
                     notif.isStarred ? "active" : ""
                   }`}
                   onClick={(e) => {
