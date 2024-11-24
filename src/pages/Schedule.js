@@ -7,14 +7,16 @@ import { FaStar } from "react-icons/fa";
 import table from "../assets/images/table.png";
 import list from "../assets/images/list.png";
 
-import {useState, useEffect, useMemo} from "react";
+import {useState, useEffect, useMemo, useRef} from "react";
 
 import React, { Component } from 'react';
 import { useNavigate, Link, useLocation} from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
+import dayjs from "dayjs"; // 날짜 포맷팅 라이브러리
 
+dayjs.locale("ko");
 
 function Schedule(){
 
@@ -98,9 +100,11 @@ function Schedule(){
           // console.log("group", group)
           return group.events ? group.events.map((event, idx) => ({
             ...event,
+            id: event.id,
             start: new Date(event.start),
             end: new Date(event.end),
             notice: event.notice,
+            new: event.new,
             showDate: group.isFirstOutput || idx === 0, // 첫 번째 출력 시만 날짜 표시
           })):{};
         });
@@ -121,21 +125,31 @@ function Schedule(){
           const key = `${startDate}-${endDate}`;
           if (!groupedEvents[key]) {
             groupedEvents[key] = {
+              ids: [],
               start: event.start,
               end: event.end,
               titles: [], // 이벤트 제목을 배열로 저장
+              notices: [],
+              news :[],
+              showDate : event.showDate
             };
           }
-          groupedEvents[key].titles.push(event.title); // 제목 추가
+          groupedEvents[key].ids.push(event.id);
+          groupedEvents[key].titles.push(event.title);
+          groupedEvents[key].notices.push(event.notice);
+          groupedEvents[key].news.push(event.new); // 제목 추가
         });
       
         return Object.keys(groupedEvents).map((key) => {
           const group = groupedEvents[key];
           return {
+            id: group.ids.length > 1 ? group.ids : group.ids[0],
             title: group.titles.join("@ "), // 여러 제목을 합쳐 표시
             start: group.start,
             end: group.end,
-            mark: 0,
+            notice:group.notices.length > 1 ? group.notices : group.notices[0],
+            new :group.news.length > 1 ? group.news : group.news[0],
+            showDate : group.showDate
           };
         });
       };
@@ -155,27 +169,39 @@ function Schedule(){
     };
 
     const [currentEvents, setCurrentEvents] = useState(fullCalendarEvents);
+    const [transEvents, setTransEvents] = useState(transformEvents(fullCalendarEvents));
     const [currentView, setCurrentView] = useState("dayGridMonth");
+    // const [printedScheIdx, setPrintedScheIndx] = useState([]);
+
+    useEffect(()=>{
+      setTransEvents(transformEvents(fullCalendarEvents));
+    },[currentEvents])
 
     const handleViewDidMount = (arg) => {
-      console.log("View Mounted:", arg.view.type);
-    
+      console.log("View Mounted:", arg.view.type, currentView, fullCalendarEvents, transformEvents(fullCalendarEvents));
+      // setWrittenDate([]);
+      // setPrintedScheIndx(0);
       if (arg.view.type === "dayGridMonth") {
         setCurrentEvents(fullCalendarEvents);
         setCurrentView("dayGridMonth");
-      } else if (arg.view.type === "timeGridWeek") {
+      } else if (arg.view.type === "listMonth") {
         setCurrentEvents(transformEvents(fullCalendarEvents));
-        setCurrentView("timeGridWeek");
+        setCurrentView("listMonth");
       }
     };
 
     useEffect(()=>{
       if (currentView === "dayGridMonth") {
         setCurrentEvents(fullCalendarEvents);
-      } else if (currentView === "timeGridWeek") {
+      } else if (currentView === "listMonth") {
+        console.log("listmonth current events update")
         setCurrentEvents(transformEvents(fullCalendarEvents));
       }
     },[fullCalendarEvents])
+
+    useEffect(()=>{
+      console.log("currentEvents", currentEvents)
+    },[currentEvents])
 
     const handleDatesSet = (arg) => {
         const { view } = arg;
@@ -216,16 +242,64 @@ function Schedule(){
         navigate("/schedule/detail", {state:{ title:event.title, notice: event.extendedProps.notice, selectedFavorites: selectedFavorites }});
     };
 
+    const eventClickHandler3 = (event) => {
+      // info.preventDefault();
+      console.log("click3", event);
+      setTodos((prevTodos) =>{
+        const updatedTodos = prevTodos.map((todo) =>(
+          todo.id === event.id ? { ...todo, new: 0 } : todo
+        ))
+        console.log("click3 ut",updatedTodos);
+        return updatedTodos;
+    });
+
+      // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
+      if(event.notice.length > 0)
+        navigate("/schedule/detail", {state:{ title:event.title, notice: event.notice, selectedFavorites: selectedFavorites }});
+    };
+
+    // const [writtenDate, setWrittenDate] = useState([]);
+
+    // const eventDidMountHandler = (info) => {
+    //   console.log("eventDidMount", info);
+    //   const timeElement = info.el.querySelector(".fc-list-event-time");
+    //   if (timeElement) {
+    //     // 요일 정보 생성
+    //     const startDay = dayjs(info.event.start).format("D일(ddd)");
+    //     const endDay = info.event.end
+    //       ? dayjs(info.event.end).format("D일(ddd)")
+    //       : null;
+
+    //     const eventKey = `${startDay}-${endDay}`;
+    //     const isAlreadyWritten = writtenDate.includes(eventKey);
+
+    //     // writtenDate에 기록되지 않은 경우에만 추가
+    //     if (isAlreadyWritten) {
+    //       timeElement.innerText = ""
+    //     }else{
+    //       // time 요소의 내용을 교체
+    //       timeElement.innerText = `${startDay}${endDay ? ` - ${endDay}` : ""}`;
+    //     }
+    //   }
+    // }
+
     // const favorites = location.state.favorites ? location.state.favorites:{};
     const [selectedFavorites, setSelectedFavorites] = useState({});
   
     // 별표 클릭 시 상태 업데이트 함수
     const toggleFavorite = (eventId) => {
-      // console.log("togglefavor", eventId)
+      console.log("star togglefavor", eventId)
       setSelectedFavorites((prevState) => ({
         ...prevState,
         [eventId]: !prevState[eventId], // 해당 이벤트의 별표 상태를 반전시킴
       }));
+
+      // // 상태 변경 후 FullCalendar 이벤트 강제 리렌더링
+      // setTimeout(() => {
+      //   if (calendarRef.current) {
+      //     calendarRef.current.getApi().refetchEvents();
+      //   }
+      // }, 0); 
     };
 
     // 리스트 일정에서 출력한 이벤트
@@ -238,7 +312,30 @@ function Schedule(){
       }
     };
 
-    const updatedEventIdSet = [];
+    const formatDayHeader = (dateInfo) => {
+      const startDay = dayjs(dateInfo.start).format("D일(ddd)");
+      const endDay = dayjs(dateInfo.end).subtract(1, "day").format("D일(ddd)");
+      return `${startDay} - ${endDay}`;
+    };
+
+    const printedEventIds = new Set();
+
+    const calendarRef = useRef(null);
+
+    // viewDidMount와 같은 역할을 하는 useEffect
+    useEffect(() => {
+      // 이벤트 업데이트 후 FullCalendar를 갱신
+      if (calendarRef.current) {
+        const calendarApi = calendarRef.current.getApi();
+        calendarApi.refetchEvents();  // 이벤트 새로 고침
+      }
+    }, [currentEvents]);
+
+    useEffect(() => {
+      if (calendarRef.current) {
+        calendarRef.current.getApi().refetchEvents();
+      }
+    }, [currentEvents]);
 
     const listViewEventContent = (arg) => {
       const { event } = arg;
@@ -260,38 +357,120 @@ function Schedule(){
           }).replace(' ', '')
         : startDate;
 
-      
-  
-      // console.log(event.id, updatedEventIdSet, updatedEventIdSet.includes(event.id),arg.view.type);
-      if (!updatedEventIdSet.includes(event.id)) {
-        updatedEventIdSet.push(event.id);
-        // setEventIdSet(updatedEventIdSet); 
-        // 상태 업데이트
-      } else{
-            // console.log(arg.view.type === 'listMonth')
-            if (arg.view.type === 'listMonth') {
-                
-            }
-      }
+          
 
       if (arg.view.type === 'listMonth') {
+          console.log("listview",arg, currentEvents, transformEvents(fullCalendarEvents), currentEvents.toString() !== transformEvents(fullCalendarEvents).toString(), currentEvents.some(event => event.title === arg.event.title));
+        
+          const currentViewEvents = arg.view.calendar.getEvents();
+          if(currentView !== 'listMonth' || currentViewEvents.toString() !== transformEvents(fullCalendarEvents).toString()){
+            return null;
+          }
+          if(!currentEvents.some(event => event.title === arg.event.title)){
+            return null;
+          }
+          dayjs.locale('ko');
+          const startDay = dayjs(arg.event.start).format("D일(ddd)");
+          const endDay = arg.event.end
+            ? dayjs(arg.event.end).format("D일(ddd)")
+            : null;
+          
+          // 중복 여부 확인
+          const eventKey = `${startDay}${endDay ? '-'+endDay : ''} `;
+
+          const prevStartDay = event.id > 1 ? dayjs(currentEvents[event.id-2].start).format("D일(ddd)") : "none";
+          const prevEndDay = event.id > 1 ? currentEvents[event.id-2].end
+            ? dayjs(currentEvents[event.id-2].end).format("D일(ddd)")
+            : null : "none";
+
+          const prevEventKey = `${prevStartDay}${prevEndDay ? '-'+prevEndDay : ''} `;
+          // const isAlreadyPrinted = currentEvents[printedScheIdx] ? currentEvents[printedScheIdx].title == arg.event.title : false;
+
+          // console.log("written", eventKey, arg.event, currentEvents[printedScheIdx], printedScheIdx, isAlreadyPrinted);
+          // if (!isAlreadyPrinted) {
+          //   setPrintedScheIndx((prev)=>prev+1);
+          // }
+          // else{
+          //   return;
+          // }
+
+          const isScheInOrder = currentEvents[printedEventIds.size] ? currentEvents[printedEventIds.size].title == event.title : false
+
+          console.log('printed',arg, event, event.id,
+            printedEventIds, eventKey, currentEvents, 
+            printedEventIds.size, isScheInOrder, printedEventIds.has(event.id),
+            arg.event.title, event.title)
+          if (printedEventIds.has(event.id) || !isScheInOrder) {
+            console.log("printed 2 true false", "return null")
+            return null; // Skip rendering if already printed
+          }
+        
+          // Mark the event as printed
+          printedEventIds.add(event.id);
+          
+          var printedEventKeys = false;
+          if(event.id > 1){
+            printedEventKeys = eventKey == prevEventKey;
+            console.log("printed EventKeys", eventKey == prevEventKey, eventKey,prevEventKey
+            )
+          
+          }
+
+          const eventLen = event.id.split(",").map(id => id.trim()).length;
+          var events = []
+          if(eventLen > 1 ){
+            for(var i = 0; i < eventLen; i++){
+              events = [...events, {id: event.id.split(",")[i],
+                start: event.start,
+                end: event.end,
+                title:event.title.split("@")[i],
+                notice: event.extendedProps.notice[i],
+                new: event.extendedProps.new[i]
+              }];
+            }
+            
+          }
+          console.log("events", events);
+
+          console.log("success", event.id)
+
           return (
           // <Link className="w-full p-0"  to={{pathname:event.extendedProps.notice ? "/scheduleDetail":"", state:{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}}>
           // <Link className="w-full p-0"  to={event.extendedProps.notice ? "/scheduleDetail":""} state={{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}>
-          
-          <div className={`custom-event flex flex-row py-0 ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`}>
-
-              <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)': event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
-                  <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'13px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
-                      {event.title} <p className=" bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</p>
+          <div className="flex" style={{minWidth:"90px", margin:"8px 0px"}}>
+            <time className="flex-none my-auto pr-3" style={{textSize:"10px", minWidth:"90px", textAlign:'right'}}>
+              {printedEventKeys ? "" : eventKey}
+              </time>
+            <div className={`flex-auto custom-event flex flex-row py-0 ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`}>
+                {event.id.split(",").map(id => id.trim()).length > 1 ? 
+                  <div className="flex flex-auto flex-col gap-1.5 w-full">
+                  {events.map((event)=>(
+                    <div key={event.id} className="flex flex-auto event-title align-middle p-1.5 m-0" style={{backgroundColor: selectedFavorites[event.id] ? 'rgb(105, 173, 1)': event.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
+                        <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'9px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}
+                         onClick={(e)=>{e.stopPropagation();eventClickHandler3(event)}}>
+                            {event.title} <p className=" bg-inherit" style={{color:"red", display: event.new ? "inline-block" : "none"}}>new</p>
+                        </div>
+                        <div className="flex-none event-favorite align-middle my-auto" style={{ backgroundColor:selectedFavorites[event.id] ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(e) => {e.preventDefault();e.stopPropagation();toggleFavorite(event.id)}}>
+                            <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:selectedFavorites[event.id] ? 'rgb(105, 173, 1)' : "inherit", color: selectedFavorites[event.id] ? 'yellow' : 'gray'} }>
+                              <FaStar className="bg-inherit my-auto"/>
+                            </span> {/* 별표 아이콘 */}
+                        </div>
+                    </div> 
+                  ))}
                   </div>
-                  <div className="flex-none event-favorite align-middle my-auto" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.preventDefault();event.stopPropagation();toggleFavorite(arg.event.id)}}>
-                      <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
-                        <FaStar className="bg-inherit my-auto"/>
-                      </span> {/* 별표 아이콘 */}
-                  </div>
-              </div>
-              
+                  : <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)': event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
+                    <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'9px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}
+                      onClick={(e)=>{e.stopPropagation();eventClickHandler2(event)}}
+                      >
+                        {event.title} <p className=" bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</p>
+                    </div>
+                    <div className="flex-none event-favorite align-middle my-auto z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event.id); console.log("star", isFavorite)}}>
+                        <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
+                          <FaStar className="bg-inherit my-auto"/>
+                        </span> {/* 별표 아이콘 */}
+                    </div>
+                </div> }
+            </div>
           </div>
           // </Link>
       )}
@@ -305,7 +484,7 @@ function Schedule(){
                 <div className="flex-none bg-inherit">{event.title} </div>
                 <div className="flex-auto ml-1 bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</div>
               </div>
-              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event.id); }}>
+              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5 z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event.id); }}>
                   <div className="event-favorite-star bg-inherit my-auto cursor-pointer" style={{ fontSize:"15px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
                     <FaStar className="bg-inherit my-auto" />
                   </div> {/* 별표 아이콘 */}
@@ -331,6 +510,7 @@ function Schedule(){
             <div id="calender-container" className="h-fit m-3 mb-5 rounded-lg shadow-lg">
                   
                <FullCalendar
+                    ref={calendarRef}
                     className="block"
                     plugins={[listPlugin, dayGridPlugin]}
                     initialView="dayGridMonth" // 초기 View 설정
@@ -341,6 +521,7 @@ function Schedule(){
                     dragScroll={true}
                     locale="ko"
                     eventClick={eventClickHandler}
+                    // eventDidMount={eventDidMountHandler}
                     listDayFormat={{
                         weekday: "short",
                         day: "numeric",
@@ -392,6 +573,7 @@ function Schedule(){
                             },
                         },
                         listMonth: {
+                          displayEventTime:"false",
                           buttonText: " ",
                           dayHeaderContent : (arg) => {
                               // '일(요일)' 형식으로 변경
@@ -402,7 +584,8 @@ function Schedule(){
                           }, // 버튼 텍스트 설정
                         },
                     }}
-                    events={filterEventsForCurrentViewMonth(currentEvents)} // 현재 보이는 월에 해당하는 이벤트만 필터링
+                    events={currentEvents} // 현재 보이는 월에 해당하는 이벤트만 필터링
+                    // events={fullCalendarEvents}
                     datesSet={handleDatesSet} // datesSet 이벤트 핸들러 추가
                     viewDidMount={handleViewDidMount} // 뷰가 마운트될 때 호출
                     // viewWillUnmount={handleViewDidMount} // 뷰가 언마운트될 때 호출

@@ -401,9 +401,21 @@
     font-size: 15px;
 }
 
+.fc-list-event{
+    width:100%;
+}
+
 .fc-list-event-title{
     padding:3px 14px;
 }
+
+.fc .fc-list-day-cushion, .fc .fc-list-table td {
+    padding: 0px 14px;
+}
+
+/* .fc-list-event-title.hide-event-title {
+    display: none !important;
+  } */
 
 /*다음달 날짜 삭제*/
 .fc-day-other-month {
@@ -417,7 +429,9 @@
     font-weight:bolder;
     border-bottom: 1px black solid;
 }
-.fc-list-event-time, .fc-list-event-graphic{
+.fc-list-day,
+.fc-list-event-time, 
+.fc-list-event-graphic{
     display: none;
 }
 .fc-event.fc-event-start.fc-event-end.fc-event-past.fc-list-event{
