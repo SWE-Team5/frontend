@@ -74,7 +74,7 @@ function Register({ onBack }) {
         className="cursor-pointer bg-white"
         onClick={handleBackToNotices} // Use handleBackToNotices to return to the notices
       />
-      <h1 className="text-lg font-semibold flex-1 text-center bg-white">
+      <h1 className="text-lg font-semibold flex-1 text-center bg-white w-full">
         관심 공지 등록 및 확인
       </h1>
       <div className="w-6"></div>

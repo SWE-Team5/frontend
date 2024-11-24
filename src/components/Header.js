@@ -68,13 +68,23 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
             </div>
         )
     }
-    else if (page == "Scrap"){
-        return(
-            <div className="flex flex-wrapw-full h-14 text-3xl border-b-stone-400 bg-white">
+    else if (page == "Scrap") {
+        return (
+            <div className="flex flex-wrap justify-between items-center w-full h-14 p-3 text-3xl border-b bg-white">
+                {/* 뒤로가기 버튼 */}
+                <IoIosArrowBack 
+                    className="flex-none bg-inherit cursor-pointer" 
+                    onClick={() => navigate(-1)} 
+                />
+                <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
+                    <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
+                    <p className="flex-none pt-1 bg-inherit text-base font-bold">나의 공지함</p>
+                </div>
                 
             </div>
-        )
+        );
     }
+    
     else if (page == "chatbot"){
         return(
             <div className="flex flex-wrapw-full h-14 text-3xl border-b-stone-400 bg-white">
