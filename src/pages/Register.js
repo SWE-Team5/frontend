@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmarkSharp } from "react-icons/io5";
 import ExternalPage from "../components/ExternalPage";
+import Header from "../components/Header";
 
 function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
@@ -68,24 +69,14 @@ function Register({ onBack }) {
   // Render the ExternalPage if a notice is selected
   <div className="h-full flex flex-col">
     {/* Header Section */}
-    <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
-      <IoIosArrowBack
-        size={24}
-        className="cursor-pointer bg-white"
-        onClick={handleBackToNotices} // Use handleBackToNotices to return to the notices
-      />
-      <h1 className="text-lg font-semibold flex-1 text-center bg-white w-full">
-        관심 공지 등록 및 확인
-      </h1>
-      <div className="w-6"></div>
-    </div>
+    <Header page="keywordRegister" />
 
     {/* External Page */}
     <ExternalPage url={selectedNoticeURL} />
   </div>
 ) : (
 
-        <div>
+        <div className="bg-white">
           {/* Header Section */}
           <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
             <IoIosArrowBack

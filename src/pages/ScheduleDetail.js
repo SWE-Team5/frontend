@@ -113,8 +113,8 @@ function ScheduleDetail({}){
                         <div className="pb-2 related_notice_title font-bold text-s w-full block text-left"> 관련 공지 </div>
 
                         <div className='sb'>
-                            <input className="searchbar" type="text" name="content" value={content} onChange={(e)=>setContent(e.target.value)} />
-                            <button className="searchbar_btn" type="submit">입력</button>
+                            <input className="searchbar" placeholder="검색어를 입력하세요." type="text" name="content" value={content} onChange={(e)=>setContent(e.target.value)} />
+                            <button className="searchbar_btn" type="submit">검색</button>
                         </div>
                         
                         <div className="mt-9 line"></div>

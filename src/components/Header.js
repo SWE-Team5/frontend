@@ -23,8 +23,8 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                     <p className="pt-1 bg-inherit text-base font-bold">성균관대학교</p>
                 </div>
                 <div className="flex-none flex justify-center space-x-1 bg-white">
-                    <img className="w-fit m-0 cursor-pointer" src={chatbotIcon} alt="chatbot_icon" height="25px" width="" />
-                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" />
+                    <img className="w-fit m-0 cursor-pointer" src={chatbotIcon} alt="chatbot_icon" height="25px" width="" onClick={()=>navigate("/chatbot")} />
+                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" onClick={()=>navigate("/scrap")}/>
                     <IoIosSearch className="bg-inherit cursor-pointer"/>
                 </div>
             </div>
@@ -84,7 +84,15 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
             </div>
         );
     }
-    
+    else if(page == "keywordRegister"){
+        return(
+        <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
+            <IoIosArrowBack className="flex-none bg-inherit mt-1" onClick={() => navigate("/schedule", {state:{favorites:selectedFavorites}})}/>
+            <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
+                <p className="flex-none pt-1 bg-inherit text-base font-bold">관심 공지 등록 및 확인</p>
+            </div>
+        </div>)
+    }    
     else if (page == "chatbot"){
         return(
             <div className="flex flex-wrapw-full h-14 text-3xl border-b-stone-400 bg-white">

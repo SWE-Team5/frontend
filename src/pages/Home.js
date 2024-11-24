@@ -101,7 +101,7 @@ function Home({student_data}){
                         <img className="bg-transparent" src={scheduleIcon} width="25px" height="25px" onClick={()=>navigate("/schedule")}/>
                     </div>
                     <div className={`flex-none ${styles.shortcut} w-fit px-2 py-1.5 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
-                        <img className="bg-transparent" src={scrapIcon} width="25px" height="25px"/>
+                        <img className="bg-transparent" src={scrapIcon} width="25px" height="25px" onClick={()=>navigate("/keywordRegister")}/>
                     </div>
                     <div className={`flex-none ${styles.shortcut} w-fit p-2 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
                         <FaPlus className="bg-transparent text-gray-400 my-0.5"/>
