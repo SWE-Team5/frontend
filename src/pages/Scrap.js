@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import "../styles/Scrap.css";
 import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
+
+
 
 function NotificationApp() {
+  const navigate = useNavigate(); // useNavigate 추가
   const [currentView, setCurrentView] = useState("main");
   const [notifications, setNotifications] = useState([
     {
@@ -57,15 +61,14 @@ function NotificationApp() {
     );
   };
 
+  const handleNotificationClick = (notification) => {
+    navigate(`/scrap3`, { state: { notification } });
+  };
+
   return (
     <div className="notification-app">
       <Header page="Scrap" />
 
-      {/* Header 
-      <header className="header">
-        <button className="back-button">←</button>
-        <h1 className="header-title">나의 공지함</h1>
-      </header> */}
 
       {/* Main Content */}
       <div className="main-content">
@@ -126,6 +129,7 @@ function NotificationApp() {
                 className={`notification-item ${
                   notif.isNew ? "unread-notification" : "read-notification"
                 }`}
+                onClick={() => handleNotificationClick(notif)} // onClick 이벤트 추가
               >
                 <div className="notification-title">{notif.title}</div>
                     
@@ -137,7 +141,10 @@ function NotificationApp() {
                   className={`notification-icon ${
                     notif.isStarred ? "active" : ""
                   }`}
-                  onClick={() => handleStarClick(notif.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 부모 onClick 이벤트 방지
+                    handleStarClick(notif.id);
+                  }}
                 >
                   ★
                 </div>

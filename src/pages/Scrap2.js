@@ -37,8 +37,8 @@ function ScrapNotifications() {
             <img src="/kingo-m-logo.png" alt="KINGO-M" />
           </div>
           <ul>
-            <li className="menu-item">알림 공지</li>
-            <li className="menu-item active">스크랩 공지</li>
+            <li className="menu-item">알림 <br/>공지</li>
+            <li className="menu-item active">스크랩 <br/>공지</li>
             <li className="menu-item">휴지통</li>
           </ul>
         </aside>
