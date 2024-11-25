@@ -23,6 +23,7 @@ function App() {
           <Route path='/schedule/detail/notice' element={<SelectedNotice />} />      
           <Route path='/chatbot' element={<Chatbot />} />
           <Route path='/keywordRegister' element={<Register />} />
+          <Route path='/keyword/notice' element={<SelectedNotice />} />
           <Route path="/scrap" element={<NotificationApp />} />
           <Route path="/scrap2" element={<ScrapNotifications />} />
           <Route path="/scrap/detail/:id" element={<NotificationDetail />} />

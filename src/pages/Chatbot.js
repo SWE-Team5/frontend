@@ -3,6 +3,7 @@ import { AiOutlineSend } from "react-icons/ai";
 import { useState } from "react";
 import skku_logo2 from "../assets/images/skku_logo2.png";
 import chatbotIcon from "../assets/images/chatbot_icon.png";
+import Header from "../components/Header";
 
 function Chatbot({ onBack }) {
   const [messages, setMessages] = useState([
@@ -23,21 +24,7 @@ function Chatbot({ onBack }) {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       {/* Header Section */}
-      <div className="flex items-center p-3 bg-white text-black shadow-md w-full">
-        {/* Back Arrow */}
-        <IoIosArrowBack size={24} className="cursor-pointer flex-shrink-0 bg-white" onClick={onBack} />
-
-        {/* Center Content */}
-        <div className="flex-grow text-center bg-white">
-          <div className="inline-flex items-center justify-center space-x-2 bg-white">
-            <img src={skku_logo2} alt="SKKU Logo" className="h-6" />
-            <p className="font-bold text-sm bg-white">성균관대학교</p>
-          </div>
-        </div>
-
-        {/* Globe Icon */}
-        <IoIosGlobe size={24} className="cursor-pointer flex-shrink-0 bg-white" />
-      </div>
+      <Header page="chatbot"/>
 
       {/* Bot Info Section */}
       <div className="flex items-center justify-center w-full bg-white text-black p-3 border  border-gray-400 rounded-lg">
@@ -64,7 +51,7 @@ function Chatbot({ onBack }) {
       </div>
 
       {/* Input Section */}
-      <div className="flex p-3 border-t bg-white fixed bottom-1 w-full">
+      <div className="flex p-3 border-t bg-white fixed bottom-1 w-full" style={{maxWidth:"400px"}}>
         <input
           className="flex-grow p-2 border border-gray-400 rounded-lg text-sm"
           type="text"

@@ -3,8 +3,12 @@ import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmarkSharp } from "react-icons/io5";
 import ExternalPage from "../components/ExternalPage";
 import Header from "../components/Header";
+import { BiBorderBottom } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 function Register({ onBack }) {
+  const navigate = useNavigate();
+  
   const [keywords, setKeywords] = useState([]);
   const [inputKeyword, setInputKeyword] = useState("");
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
@@ -78,20 +82,12 @@ function Register({ onBack }) {
 
         <div className="bg-white">
           {/* Header Section */}
-          <div className="flex items-center justify-between bg-white px-4 py-2 border-b border-gray-300">
-            <IoIosArrowBack
-              size={24}
-              className="cursor-pointer bg-white"
-              onClick={onBack}
-            />
-            <h1 className="text-lg font-semibold flex-1 text-center bg-white">
-              관심 공지 등록 및 확인
-            </h1>
-            <div className="w-6"></div>
-          </div>
+          <Header page="keywordRegister" />
+
+          <hr style={{background:"gray"}}/>
 
           {/* Input Section */}
-          <div className="flex items-center mt-5 mx-4">
+          <div className="flex items-center mt-5 mx-4 bg-white">
             <input
               type="text"
               value={inputKeyword}
@@ -108,21 +104,21 @@ function Register({ onBack }) {
           </div>
 
           {/* Notices Section */}
-          <div className="flex mt-5 mx-4 border border-gray-300 rounded-lg h-[calc(100vh-180px)]">
+          <div className="flex mt-5 mx-4 border border-gray-300 rounded-lg h-[calc(100vh-180px)] p-4" style={{backgroundColor:"#f2f2f2"}}>
             {/* Left Section */}
-            <div className="w-1/3 bg-gray-100 flex flex-col p-4">
-              <h2 className="font-semibold text-center border-b pb-2">
+            <div className="flex-none flex flex-col pr-4 pt-3" style={{borderRight:"0.5px darkgray solid"}}>
+              <h3 className="font-semibold text-center border-b pb-3 w-fit pt-1">
                 나의 키워드
-              </h2>
-              <ul className="mt-4 space-y-2">
+              </h3>
+              <ul className="pt-3 space-y-2" style={{minHeight:"100px", backgroundColor:"#dee2e6", borderRadius:"5px"}}>
                 {keywords.map((keyword, index) => (
-                  <li key={index} className="text-xs">
+                  <li key={index} className="text-xs bg-inherit">
                     <span
                       className={`cursor-pointer ${
                         clickedKeyword === keyword
                           ? "font-bold text-blue-600"
                           : ""
-                      }`}
+                      } bg-inherit`}
                       onClick={() => handleKeywordClick(keyword)}
                     >
                       {keyword}
@@ -133,10 +129,10 @@ function Register({ onBack }) {
             </div>
 
             {/* Right Section */}
-            <div className="flex-1 p-4">
-              <h2 className="font-semibold text-center border-b pb-2">
+            <div className="flex-auto p-4 pr-0">
+              <h3 className="font-semibold text-center border-b pb-2" style={{borderBottom:"0.5px darkgray solid"}}>
                 관련 공지
-              </h2>
+              </h3>
               <ul className="mt-4 space-y-2">
                 {filteredNotices.length === 0 ? (
                   <p className="text-gray-500 text-center">
@@ -148,9 +144,10 @@ function Register({ onBack }) {
                       key={index}
                       className="flex p-2 border rounded-md bg-gray-200 flex justify-between"
                     >
-                      <span
-                        className="flex-auto cursor-pointer bg-inherit"
-                        onClick={() => handleNoticeClick(notice.url)}
+                      <span style={{fontSize:"10px"}}
+                        className="flex-auto cursor-pointer bg-inherit pr-1"
+                        // onClick={() => handleNoticeClick(notice.url)}
+                        onClick={()=>navigate("/keyword/notice", {state:{title: notice.title, noticeURL: notice.url, page:"keywordRegister"}})}
                       >
                         {notice.title}
                       </span>
@@ -162,7 +159,7 @@ function Register({ onBack }) {
                               ? "text-red-500"
                               : "text-gray-500"
                           }`}
-                          style={{width:"20px"}}
+                          style={{width:"15px"}}
                           onClick={() => toggleIconColor(index)}
                         />
                       </div>

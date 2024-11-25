@@ -53,7 +53,7 @@ function ScheduleDetail({}){
         });
         console.log("propsNotice",propsNotice, sortedNotices)
         // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark }});
+        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark, page:"scheduleDetail" }});
     };
 
     const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
