@@ -173,9 +173,9 @@ function Schedule(){
     const [currentView, setCurrentView] = useState("dayGridMonth");
     // const [printedScheIdx, setPrintedScheIndx] = useState([]);
 
-    useEffect(()=>{
-      setTransEvents(transformEvents(fullCalendarEvents));
-    },[currentEvents])
+    // useEffect(()=>{
+    //   setTransEvents(transformEvents(fullCalendarEvents));
+    // },[currentEvents])
 
     const handleViewDidMount = (arg) => {
       console.log("View Mounted:", arg.view.type, currentView, fullCalendarEvents, transformEvents(fullCalendarEvents));
@@ -199,9 +199,9 @@ function Schedule(){
       }
     },[fullCalendarEvents])
 
-    useEffect(()=>{
-      console.log("currentEvents", currentEvents)
-    },[currentEvents])
+    // useEffect(()=>{
+    //   console.log("currentEvents", currentEvents)
+    // },[currentEvents])
 
     const handleDatesSet = (arg) => {
         const { view } = arg;
@@ -305,18 +305,18 @@ function Schedule(){
     // 리스트 일정에서 출력한 이벤트
     //   const [eventIdSet, setEventIdSet] = useState([]);
 
-    const handleViewChange = (view) => {
-      // FullCalendar에서 뷰가 변경될 때마다 상태를 초기화
-      if (view.type === 'dayGridMonth' || view.type === 'listMonth') {
-          // setEventIdSet([]); // 상태 초기화
-      }
-    };
+    // const handleViewChange = (view) => {
+    //   // FullCalendar에서 뷰가 변경될 때마다 상태를 초기화
+    //   if (view.type === 'dayGridMonth' || view.type === 'listMonth') {
+    //       // setEventIdSet([]); // 상태 초기화
+    //   }
+    // };
 
-    const formatDayHeader = (dateInfo) => {
-      const startDay = dayjs(dateInfo.start).format("D일(ddd)");
-      const endDay = dayjs(dateInfo.end).subtract(1, "day").format("D일(ddd)");
-      return `${startDay} - ${endDay}`;
-    };
+    // const formatDayHeader = (dateInfo) => {
+    //   const startDay = dayjs(dateInfo.start).format("D일(ddd)");
+    //   const endDay = dayjs(dateInfo.end).subtract(1, "day").format("D일(ddd)");
+    //   return `${startDay} - ${endDay}`;
+    // };
 
     const printedEventIds = new Set();
 
@@ -331,11 +331,11 @@ function Schedule(){
       }
     }, [currentEvents]);
 
-    useEffect(() => {
-      if (calendarRef.current) {
-        calendarRef.current.getApi().refetchEvents();
-      }
-    }, [currentEvents]);
+    // useEffect(() => {
+    //   if (calendarRef.current) {
+    //     calendarRef.current.getApi().refetchEvents();
+    //   }
+    // }, [currentEvents]);
 
     const listViewEventContent = (arg) => {
       const { event } = arg;
@@ -495,6 +495,13 @@ function Schedule(){
       }
     };
 
+    const currentYear = new Date().getFullYear();
+
+    const validRange = useMemo(() => ({
+      start: `${currentYear}-01-01`,
+      end: `${currentYear + 1}-01-01`,
+    }), [currentYear]);
+
 
     return(
        <div className="relative w-full h-full bg-white">
@@ -514,6 +521,11 @@ function Schedule(){
                     className="block"
                     plugins={[listPlugin, dayGridPlugin]}
                     initialView="dayGridMonth" // 초기 View 설정
+                    validRange={validRange}
+                    // validRange={{
+                    //   start: `2024-01-01`, // 올해 1월 1일
+                    //   end: `2025-01-01`, // 내년 1월 1일
+                    // }}
                     titleFormat={{ month: "long" }}
                     height="auto"
                     contentHeight={600}
@@ -549,27 +561,27 @@ function Schedule(){
                                 return arg.date.getDate(); // 숫자만 표시
                             },
                             dayCellDidMount: (arg) => {
-                                const viewStart = arg.view.currentStart; // 현재 View의 시작일
-                                const currentMonth = viewStart.getMonth(); // 현재 월
+                                // const viewStart = arg.view.currentStart; // 현재 View의 시작일
+                                // const currentMonth = viewStart.getMonth(); // 현재 월
                     
-                                // console.log("arg",arg, currentMonth, arg.date.getMonth());
-                                // 이번 달의 날짜가 아닌 날짜들은 숨긴다.
-                                if (arg.date.getMonth() !== currentMonth) {
-                                  const startOfWeek = new Date(arg.date); 
-                                  startOfWeek.setDate(arg.date.getDate() - arg.date.getDay()); // 해당 날짜의 주 첫 번째 날(일요일)을 찾음
-                                  const endOfWeek = new Date(startOfWeek);
-                                  endOfWeek.setDate(startOfWeek.getDate() + 6); // 해당 날짜의 주 마지막 날(토요일)
-                                  // console.log("arg.date",arg.date, startOfWeek, endOfWeek);
+                                // // console.log("arg",arg, currentMonth, arg.date.getMonth());
+                                // // 이번 달의 날짜가 아닌 날짜들은 숨긴다.
+                                // if (arg.date.getMonth() !== currentMonth) {
+                                //   const startOfWeek = new Date(arg.date); 
+                                //   startOfWeek.setDate(arg.date.getDate() - arg.date.getDay()); // 해당 날짜의 주 첫 번째 날(일요일)을 찾음
+                                //   const endOfWeek = new Date(startOfWeek);
+                                //   endOfWeek.setDate(startOfWeek.getDate() + 6); // 해당 날짜의 주 마지막 날(토요일)
+                                //   // console.log("arg.date",arg.date, startOfWeek, endOfWeek);
 
-                                  // startOfWeek가 현재 월과 같은 주에 속하는지 확인
-                                  const sameWeek = startOfWeek.getMonth() == currentMonth || endOfWeek.getMonth() == currentMonth;
+                                //   // startOfWeek가 현재 월과 같은 주에 속하는지 확인
+                                //   const sameWeek = startOfWeek.getMonth() == currentMonth || endOfWeek.getMonth() == currentMonth;
                                   
-                                  console.log(startOfWeek.getMonth(), currentMonth, endOfWeek.getMonth(), sameWeek);
-                                  // 이전 달과 다음 달 날짜가 같은 주에 속하면 표시
-                                  if (arg.date.getMonth() !== currentMonth && !sameWeek) {
-                                    // arg.el.style.display = "none"; // 다른 주에 속하거나 이번 달에 속하지 않으면 숨김
-                                  }
-                                }
+                                //   console.log(startOfWeek.getMonth(), currentMonth, endOfWeek.getMonth(), sameWeek);
+                                //   // 이전 달과 다음 달 날짜가 같은 주에 속하면 표시
+                                //   if (arg.date.getMonth() !== currentMonth && !sameWeek) {
+                                //     // arg.el.style.display = "none"; // 다른 주에 속하거나 이번 달에 속하지 않으면 숨김
+                                //   }
+                                // }
                             },
                         },
                         listMonth: {
