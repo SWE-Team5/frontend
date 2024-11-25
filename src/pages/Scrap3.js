@@ -17,11 +17,17 @@ function NotificationRelated() {
 
   // 더미 관련 데이터
   const [relatedNotifications, setRelatedNotifications] = useState([
-    { id: 1, title: "[긴급] 2024학년도 2학기 수강신청 관련 안내", isScrapped: false, url:""},
-    { id: 2, title: "2024학년도 2학기 수강신청 안내", isScrapped: true, url:"https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122612&article.offset=0&articleLimit=10&srSearchVal=2024%ED%95%99%EB%85%84%EB%8F%84+%ED%95%99%EC%82%AC%EA%B3%BC%EC%A0%95+%EA%B2%A8%EC%9A%B8+%EA%B3%84%EC%A0%88%EC%88%98%EC%97%85+%EC%9A%B4%EC%98%81+%EC%95%88%EB%82%B4"},
-    { id: 3, title: "2024학년도 2학기 수강철회 안내", isScrapped: false, url:""},
-    { id: 4, title: "석박사통합과정 조기수료·이수포기 신청 안내", isScrapped: false, url:""},
+    { id: 1, title: "[긴급] 2024학년도 2학기 수강신청 관련 안내", isScrapped: false, isRead:1, url:""},
+    { id: 2, title: "2024학년도 2학기 수강신청 안내", isScrapped: true, isRead:1, url:"https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122612&article.offset=0&articleLimit=10&srSearchVal=2024%ED%95%99%EB%85%84%EB%8F%84+%ED%95%99%EC%82%AC%EA%B3%BC%EC%A0%95+%EA%B2%A8%EC%9A%B8+%EA%B3%84%EC%A0%88%EC%88%98%EC%97%85+%EC%9A%B4%EC%98%81+%EC%95%88%EB%82%B4"},
+    { id: 3, title: "2024학년도 2학기 수강철회 안내", isScrapped: false, isRead:0, url:""},
+    { id: 4, title: "석박사통합과정 조기수료·이수포기 신청 안내", isScrapped: false, isRead:0, url:""},
   ]);
+
+  const handleMarkAllRead = () => {
+    setRelatedNotifications((prev) =>
+      prev.map((notif) => ({ ...notif, isRead: false }))
+    );
+  };
 
   const handleBookmarkClick = (id) => {
     setRelatedNotifications((prev) =>
@@ -103,17 +109,22 @@ function NotificationRelated() {
         
         </div>
 
-        <div className="float-start mb-2 sub_func w-full">
-            <div className=" text-xs  pt-1 cursor-pointer" onClick={handleSort}>
-                <span className="inline-block float-left" >정렬</span>
-                <img className="inline-block float-left" src={sort} width="17px" height="17px" />
-            </div>
-        </div>
+        <div className="flex flex-row justify-between mb-3 sub_func w-full">
+              <div className="flex-none text-xs  pt-1 cursor-pointer" onClick={handleSort}>
+                  <span className="inline-block float-left" >정렬</span>
+                  <img className="inline-block float-left" src={sort} width="17px" height="17px" />
+              </div>
+              <div className="flex-auto"></div>
+              <div className="flex-none">
+                  {/* <button className="alarm_del">공지 삭제</button> */}
+                  <button className="mark_read justify-items-end" onClick={handleMarkAllRead}>Mark All Read</button>
+              </div>
+          </div>
 
 
         <ul className="notification-list">
           {(filteredNotices ? filteredNotices : relatedNotifications).map((notif) => (
-            <li key={notif.id} className="notification-item">
+            <li key={notif.id} className={`notification-item ${notif.isRead ? "read-notification" : "unread-notification"}`}>
               <div className="notification-title bg-inherit"
                 onClick={()=>navigate("/scrapNotice/detail", {state:{title: notif.title, noticeURL: notif.url, page:"scrapNotice"}})}
               >{notif.title}</div>

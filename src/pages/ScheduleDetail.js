@@ -136,7 +136,7 @@ function ScheduleDetail({}){
                                 const isMarked = selectedMark[idx];
                                 return(
                                     <div className="w-full">
-                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "darkgray" : "lightgray"}} key={idx}
+                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "lightgray" : "darkgray"}} key={idx}
                                         onClick={()=>{eventClickHandler(notice, idx)}}>
                                             <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
                                             <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 

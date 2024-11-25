@@ -16,30 +16,35 @@ function NotificationApp() {
       id: 1,
       title: "학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청",
       isNew: true,
+      isRead: false,
       isStarred: false,
     },
     {
       id: 2,
       title: "학사과정 학점 포기 신청",
       isNew: false,
+      isRead: false,
       isStarred: false,
     },
     {
       id: 3,
       title: "2024학년도 2학기 수강신청",
       isNew: true,
+      isRead: false,
       isStarred: true,
     },
     {
       id: 4,
       title: "2024학년도 2학기 수강철회 안내",
       isNew: false,
+      isRead: false,
       isStarred: false,
     },
     {
       id: 5,
       title: "인공지능",
       isNew: false,
+      isRead: false,
       isStarred: true,
     },
   ]);
@@ -54,7 +59,7 @@ function NotificationApp() {
 
   const handleMarkAllRead = () => {
     setNotifications((prev) =>
-      prev.map((notif) => ({ ...notif, isNew: false }))
+      prev.map((notif) => ({ ...notif, isRead: true }))
     );
   };
 
@@ -157,7 +162,7 @@ function NotificationApp() {
               <li
                 key={notif.id}
                 className={`notification-item bg-inherit ${
-                  notif.isNew ? "unread-notification" : "read-notification"
+                  notif.isRead ? "read-notification" : "unread-notification"
                 }`}
                 style={{display:notif.isStarred ? "" :"none"}}
                 onClick={() => handleNotificationClick(notif)} // onClick 이벤트 추가
