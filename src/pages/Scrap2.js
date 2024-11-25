@@ -110,7 +110,7 @@ function ScrapNotifications() {
 
 
           <ul className="scrap-notification-list">
-            {scrappedNotifications.map((notif) => (
+            {(filteredNotices ? filteredNotices : scrappedNotifications).map((notif) => (
               <li key={notif.id} className="scrap-notification-item relative">
                 {/*<div className="flex items-center justify-between">*/}
                 <div className="scrap-notificaton-title bg-inherit"

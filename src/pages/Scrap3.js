@@ -115,7 +115,7 @@ function NotificationRelated() {
           {(filteredNotices ? filteredNotices : relatedNotifications).map((notif) => (
             <li key={notif.id} className="notification-item">
               <div className="notification-title bg-inherit"
-                onClick={()=>navigate("/keyword/notice", {state:{title: notif.title, noticeURL: notif.url, page:"scrapNotice"}})}
+                onClick={()=>navigate("/scrapNotice/detail", {state:{title: notif.title, noticeURL: notif.url, page:"scrapNotice"}})}
               >{notif.title}</div>
               <div
                 className={`scrap-notification-icon bg-inherit ${
