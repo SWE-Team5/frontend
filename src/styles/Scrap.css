@@ -1,7 +1,5 @@
 .notification-app {
-    width: 360px;
-    height: 640px;
-    margin: 0 auto;
+    max-width: 400px;
     border: 1px solid lightgray; /* 디자인 확인용 */
     overflow: hidden; /* 내용이 벗어나지 않도록 설정 */
     background-color: #f5f5f5; /* 배경색 설정 */
@@ -35,7 +33,6 @@
   }
   
   .sidebar {
-    width: 80px;
     background-color: #f5f5f5;
     height: 100vh;
     border-right: 1px solid lightgray;
@@ -90,7 +87,7 @@
   .search-bar {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
     border-bottom: 1px solid #666666; /* 입력창 아래 선 추가 */
     padding-bottom: 5px; /* 선과 내용 간 간격 */
   }
@@ -121,7 +118,7 @@
   }
   
   .notification-item {
-    background-color: #747474; /* 읽은 공지사항: 진한 회색 */
+    background-color: darkgray; /* 읽은 공지사항: 진한 회색 */
     border-radius: 4px; /* 둥근 테두리 */
     padding: 5px; /* 내부 여백 */
     display: flex; /* 별표와 텍스트를 나란히 배치 */
@@ -147,16 +144,18 @@
     font-size: 10px; 
     color: #333; 
     flex-grow: 1; 
+    text-align: left;
+    padding-left: 3px;
   }
   
  /* "new" 라벨 스타일 */
 .new-label {
     display: inline-block;
-    margin-left: 10px;
     font-size: 10px;
     font-weight: bold;
     color: red; /* 빨간색 글씨 */
-    background-color: #ffe4e1; /* 연한 빨간 배경 */
+    background-color: inherit;
+    /* background-color: #ffe4e1; 연한 빨간 배경 */
     padding: 2px 5px;
     border-radius: 5px;
   }
@@ -177,6 +176,13 @@
     margin-left: 10px; /* 아이콘과 글씨 간 간격 */
     cursor: pointer; /* 클릭 가능하게 변경 */
     color: rgb(255, 204, 0); /* 항상 노란색 */
+    font-size: 12px; /* 별 크기 */
+  }
+
+  .scrap-notification-icon{
+    margin-left: 10px; /* 아이콘과 글씨 간 간격 */
+    cursor: pointer; /* 클릭 가능하게 변경 */
+    color: gray; 
     font-size: 12px; /* 별 크기 */
   }
 
@@ -208,4 +214,8 @@
   .scrap-notification-title {
     flex: 1; /* 제목이 북마크 아이콘과 겹치지 않도록 */
     color: #000; /* 검은색 글씨 */
+  }
+
+  .active2{
+    color:red;
   }

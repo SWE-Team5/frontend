@@ -8,7 +8,7 @@ import noticeIcon from "../assets/images/notice_icon.png";
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function Header({page, title, scheduleTitle, notice, selectedFavorites, selectedMark, prevPage}){
+function Header({page, title, scheduleTitle, notice, selectedFavorites, selectedMark, prevPage, detail}){
     const navigate = useNavigate();
 
     console.log(page, title);
@@ -24,7 +24,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                 </div>
                 <div className="flex-none flex justify-center space-x-1 bg-white">
                     <img className="w-fit m-0 cursor-pointer" src={chatbotIcon} alt="chatbot_icon" height="25px" width="" onClick={()=>navigate("/chatbot")} />
-                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" onClick={()=>navigate("/scrap")}/>
+                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" onClick={()=>navigate("/scrapSchedule")}/>
                     <IoIosSearch className="bg-inherit cursor-pointer"/>
                 </div>
             </div>
@@ -56,7 +56,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if(page == "selectedNotice"){
         return(
             <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 px-4 pl-2 text-3xl border-b-stone-400 bg-white">
-                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate(prevPage=="scheduleDetail" ? "/schedule/detail" : "/keywordRegister", {state:{notice:notice, title:scheduleTitle, selectedMark: selectedMark}})}/>
+                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate(-1, {state:{notice:notice, title:scheduleTitle, selectedMark: selectedMark}})}/>
                 <div className="flex flex-auto justify-center w-full gap-1 bg-inherit h-full">
                     <img className="flex-none w-fit m-0" src={skkuLogo2} alt="skku_logo" height="25px" width="" />
                     <div className="flex-auto flex flex-row bg-inherit">
@@ -74,7 +74,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                 {/* 뒤로가기 버튼 */}
                 <IoIosArrowBack 
                     className="flex-none bg-inherit cursor-pointer" 
-                    onClick={() => navigate(-1)} 
+                    onClick={() => navigate(detail=="detail"? -1: "/")} 
                 />
                 <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                     <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />

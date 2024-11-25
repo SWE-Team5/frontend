@@ -24,10 +24,12 @@ function App() {
           <Route path='/chatbot' element={<Chatbot />} />
           <Route path='/keywordRegister' element={<Register />} />
           <Route path='/keyword/notice' element={<SelectedNotice />} />
-          <Route path="/scrap" element={<NotificationApp />} />
-          <Route path="/scrap2" element={<ScrapNotifications />} />
+          <Route path="/scrapSchedule" element={<NotificationApp />} />
+          <Route path="/scrapNotice" element={<ScrapNotifications />} />
+          <Route path='/scrapNotice/detail' element={<SelectedNotice />} />      
           <Route path="/scrap/detail/:id" element={<NotificationDetail />} />
-          <Route path="/scrap3" element={<NotificationRelated />} />
+          <Route path="/srapSchedule/relatedNotice" element={<NotificationRelated />} />
+          <Route path='/srapSchedule/relatedNotice/detail' element={<SelectedNotice />} />      
         </Routes>
     </BrowserRouter>
     </div>

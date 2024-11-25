@@ -3,6 +3,8 @@ import "../styles/Scrap.css";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import kingoMIcon from "../assets/images/kingo-M.png";
+import { FaStar } from "react-icons/fa";
+import sort from "../assets/images/sort.png";
 
 
 
@@ -56,25 +58,38 @@ function NotificationApp() {
     );
   };
 
+  const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
+
   const handleSort = () => {
-    setNotifications((prev) =>
-      [...prev].sort((a, b) => (a.title > b.title ? 1 : -1))
-    );
+    const sorted = [...notifications].sort((a, b) => {
+      if (isAscending) return b.title.localeCompare(a.title); // 내림차순
+        return a.title.localeCompare(b.title); // 오름차순
+        })
+    
+    setNotifications(sorted);
+    setIsAscending(!isAscending); // 정렬 상태 토글
   };
 
   const handleNotificationClick = (notification) => {
-    navigate(`/scrap3`, { state: { notification } });
+    navigate(`/srapSchedule/relatedNotice`, { state: { notification } });
   };
 
+  const [content, setContent] = useState("");
+
+  // 공지 검색 처리
+  const filteredNotices = notifications.filter((notice) =>
+    notice.title.includes(content) // 제목에 검색어 포함 여부 확인
+);
+
   return (
-    <div className="notification-app">
+    <div className="notification-app w-full" style={{}}>
       <Header page="Scrap" />
 
 
       {/* Main Content */}
-      <div className="main-content">
+      <div className="main-content flex">
         {/* Sidebar */}
-        <aside className="sidebar">
+        <aside className="flex-none sidebar">
           <div className="kingo-logo">
             <img src={kingoMIcon} width={"50px"} height={"75px"} alt="KINGO-M"/>
             <div className="iconTitle font-bold text-l relative bottom-3">KINGO-M</div>
@@ -82,37 +97,29 @@ function NotificationApp() {
           <ul>
             <li 
                 className={`menu-item ${currentView === 'main' ? 'active' : ''}`}
-                onClick={() => setCurrentView('main')}
+                onClick={() => {setCurrentView('main'); navigate("/scrapSchedule")}}
             >
                 알림 공지
             </li>
             <li 
                 className={`menu-item ${currentView === 'scrap' ? 'active' : ''}`}
-                onClick={() => setCurrentView('scrap')}
+                onClick={() => {setCurrentView('scrap'); navigate("/scrapNotice")}}
             >
                 스크랩 공지
             </li>
-            <li 
+            {/* <li 
                 className={`menu-item ${currentView === 'trash' ? 'active' : ''}`}
                 onClick={() => setCurrentView('trash')}
             >
                 휴지통
-            </li>
+            </li> */}
           </ul>
         </aside>
 
         {/* Notifications */}
-        <div className="notifications">
+        <div className="notifications flex-auto">
           <div className="notifications-header">
             <h2>알림 공지</h2>
-            <div className="notifications-actions">
-              <button onClick={handleSort} className="sort-button">
-                정렬
-              </button>
-              <button onClick={handleMarkAllRead} className="mark-all-read">
-                Mark All Read
-              </button>
-            </div>
           </div>
 
           <div className="search-bar">
@@ -120,24 +127,48 @@ function NotificationApp() {
               type="text"
               className="search-input"
               placeholder="검색어를 입력하세요"
+              value={content} onChange={(e)=>setContent(e.target.value)}
             />
             <button className="search-button">검색</button>
           </div>
 
+          <div className="flex flex-row justify-between mb-3 sub_func w-full">
+              <div className="flex-none text-xs  pt-1 cursor-pointer" onClick={handleSort}>
+                  <span className="inline-block float-left" >정렬</span>
+                  <img className="inline-block float-left" src={sort} width="17px" height="17px" />
+              </div>
+              <div className="flex-auto"></div>
+              <div className="flex-none">
+                  {/* <button className="alarm_del">공지 삭제</button> */}
+                  <button className="mark_read justify-items-end" onClick={handleMarkAllRead}>Mark All Read</button>
+              </div>
+          </div>
+          {/* <div className="notifications-actions">
+            <button onClick={handleSort} className="sort-button">
+              정렬
+            </button>
+            <button onClick={handleMarkAllRead} className="mark-all-read">
+              Mark All Read
+            </button>
+          </div> */}
+
           <ul className="notification-list">
-            {notifications.map((notif) => (
+            {(filteredNotices ? filteredNotices:notifications).map((notif) => (
               <li
                 key={notif.id}
                 className={`notification-item bg-inherit ${
                   notif.isNew ? "unread-notification" : "read-notification"
                 }`}
+                style={{display:notif.isStarred ? "" :"none"}}
                 onClick={() => handleNotificationClick(notif)} // onClick 이벤트 추가
               >
-                <div className="notification-title bg-inherit">{notif.title}</div>
+                <div className="notification-title bg-inherit">
+                  {notif.title}
                     
-                {notif.isNew && (
-                    <span className='new-label'>new</span>
-                )}
+                  {notif.isNew && (
+                      <span className='new-label'>new</span>
+                  )}
+                </div>
                 
                 <div
                   className={`notification-icon bg-inherit ${
@@ -148,7 +179,7 @@ function NotificationApp() {
                     handleStarClick(notif.id);
                   }}
                 >
-                  ★
+                  <FaStar className="bg-inherit"/>
                 </div>
               </li>
             ))}
