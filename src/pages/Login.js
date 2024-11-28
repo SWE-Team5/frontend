@@ -24,6 +24,7 @@ function Login(){
     
           // 서버로부터 받은 응답 처리
           if (response.data.success) {
+            console.log("reponse data", response.data);
             setMessage(response.data.message); // "Login successful"
           } else {
             setMessage(response.data.message); // "Invalid credentials"
