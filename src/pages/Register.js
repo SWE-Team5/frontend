@@ -74,9 +74,11 @@ function Register({ onBack }) {
     e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
     console.log("inputKeyword", inputKeyword);
 
+    const inputkw = inputKeyword.trim();
+
     try {
       const response = await axios.post("http://127.0.0.1:5000/user/keyword", {
-        keyword: inputKeyword,
+        keyword: inputkw,
         access_token : access_token_with_header
       });
       console.log("response", response);
@@ -84,9 +86,9 @@ function Register({ onBack }) {
       if (response.data.msg === "regist keyword success") {
         console.log("response data", response.data);
         setMessage(response.data.msg); // "register keyword successful"
-        if (!keywords.includes(inputKeyword)) {
+        if (!keywords.includes(inputkw)) {
           setKeywords([...keywords, {
-            "keyword": inputKeyword,
+            "keyword": inputkw,
             "keywordid": response.data.keywordid,
             "new": 0
           }]);
