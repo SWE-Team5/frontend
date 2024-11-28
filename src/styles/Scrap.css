@@ -201,7 +201,7 @@
 }
 
 .scrap-notification-item {
-    background-color: #79BA16; 
+    background-color: gray; /* #79BA16; */
     margin-bottom: 10px;
     display: flex;
     align-items: center;

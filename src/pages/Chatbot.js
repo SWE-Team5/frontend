@@ -5,6 +5,7 @@ import skku_logo2 from "../assets/images/skku_logo2.png";
 import chatbotIcon from "../assets/images/chatbot_icon.png";
 import Header from "../components/Header";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 function Chatbot({ onBack }) {
   const [message, setMessage] = useState("");
@@ -18,7 +19,7 @@ function Chatbot({ onBack }) {
   const access_token = location.state.access_token ? location.state.access_token : "";
   const access_token_with_header = "Bearer " + access_token;
 
-  const handleSendMessage = async() => {
+  const handleSendMessage = async(e) => {
     e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
     console.log("input", input);
 
@@ -95,7 +96,7 @@ function Chatbot({ onBack }) {
         <AiOutlineSend
           size={38}
           className="ml-1 text-gray-500 cursor-pointer bg-white"
-          onClick={handleSendMessage}
+          onClick={(e)=>handleSendMessage(e)}
         />
       </div>
     </div>

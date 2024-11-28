@@ -18,33 +18,36 @@ function Register({ onBack }) {
   const access_token_with_header = "Bearer " + access_token;
 
   const [keywords, setKeywords] = useState([]);
+  const [message, setMessage] = useState("");
 
-  useEffect(async () =>{
-    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
-    console.log("inputKeyword", inputKeyword);
+  useEffect(()=>{
+    const fetchData = async () =>{
+      // e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+      console.log("inputKeyword", inputKeyword);
 
-    try {
-      const response = await axios.get("http://127.0.0.1:5000/user/keyword",
-        {        access_token : access_token_with_header        }
-      );
-      console.log("response", response);
-        // 서버로부터 받은 응답 처리
-        if (response.data.msg === "get registerd keyword success") {
-        console.log("response data", response.data);
-        setKeywords(response.data.data);
-        setMessage(response.data.msg); // "register keyword successful"
-      } else {
-        setMessage(response.data.msg); // "Invalid credentials"
-      }
-    } catch (error) {
-      // 에러 처리
-      if (error.response) {
-        setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
-      } else {
-        setMessage("An error occurred while connecting to the server.");
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/user/keyword",
+          {        access_token : access_token_with_header        }
+        );
+        console.log("response", response);
+          // 서버로부터 받은 응답 처리
+          if (response.data.msg === "get registerd keyword success") {
+          console.log("response data", response.data);
+          setKeywords(response.data.data);
+          setMessage(response.data.msg); // "register keyword successful"
+        } else {
+          setMessage(response.data.msg); // "Invalid credentials"
+        }
+      } catch (error) {
+        // 에러 처리
+        if (error.response) {
+          setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+        } else {
+          setMessage("An error occurred while connecting to the server.");
+        }
       }
     }
-
+    fetchData();
   }, [])
   
   const [inputKeyword, setInputKeyword] = useState("");
@@ -241,7 +244,7 @@ function Register({ onBack }) {
                       <span style={{fontSize:"10px"}}
                         className="flex-auto cursor-pointer bg-inherit pr-1"
                         // onClick={() => handleNoticeClick(notice.url)}
-                        onClick={()=>navigate("/keyword/notice", {state:{title: notice.title, noticeURL: notice.url, page:"keywordRegister"}})}
+                        onClick={()=>navigate("/keyword/notice", {state:{title: notice.title, noticeURL: notice.url, page:"keywordRegister", access_token: access_token}})}
                       >
                         {notice.title}
                       </span>
