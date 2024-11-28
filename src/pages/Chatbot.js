@@ -4,21 +4,54 @@ import { useState } from "react";
 import skku_logo2 from "../assets/images/skku_logo2.png";
 import chatbotIcon from "../assets/images/chatbot_icon.png";
 import Header from "../components/Header";
+import axios from "axios";
 
 function Chatbot({ onBack }) {
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { text: "안녕하세요? 저는 킹고봇입니다. 무엇을 도와드릴까요?", sender: "bot" },
   ]);
   const [input, setInput] = useState("");
 
-  const handleSendMessage = () => {
-    if (input.trim()) {
-      setMessages([...messages, { text: input, sender: "user" }]);
-      setInput("");
-      setTimeout(() => {
-        setMessages((prev) => [...prev, { text: "bot response", sender: "bot" }]);
-      }, 500);
+  const location = useLocation();
+  
+  const access_token = location.state.access_token ? location.state.access_token : "";
+  const access_token_with_header = "Bearer " + access_token;
+
+  const handleSendMessage = async() => {
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    console.log("input", input);
+
+    const input_edited = input.trim();
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/chat/login/${input_edited}`, {
+        access_token : access_token_with_header
+      });
+      console.log("response", response);
+        // 서버로부터 받은 응답 처리
+      if (response.data.msg === "chat response success") {
+        console.log("response data", response.data);
+        setMessage(response.data.msg); // "Login successful"
+
+        setMessages([...messages, { text: input_edited, sender: "user" }]);
+        setInput("");
+        setTimeout(() => {
+          setMessages((prev) => [...prev, { text: response.data.res, sender: "bot" }]);
+        }, 500);
+      } else {
+        setMessage(response.data.msg); // "Invalid credentials"
+      }
+    } catch (error) {
+      // 에러 처리
+      if (error.response) {
+        setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+        setMessage("An error occurred while connecting to the server.");
+      }
     }
+
+    setInput("");
+
   };
 
   return (
