@@ -15,23 +15,26 @@ function Login(){
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
-    
+        console.log("id", id);
+        console.log("pw", pw);
         try {
-          const response = await axios.post("http://localhost:5000/user/login", {
-            id,
-            pw,
+          const response = await axios.post("http://127.0.0.1:5000/user/login", {
+            id: id,
+            pw: pw,
           });
-    
-          // 서버로부터 받은 응답 처리
-          if (response.data.success) {
-            setMessage(response.data.message); // "Login successful"
+          console.log("response", response);
+            // 서버로부터 받은 응답 처리
+            if (response.data.msg === "login success") {
+            console.log("response data", response.data);
+            setMessage(response.data.msg); // "Login successful"
+            navigate('/home', {state:{access_token:response.data.access_token}})
           } else {
-            setMessage(response.data.message); // "Invalid credentials"
+            setMessage(response.data.msg); // "Invalid credentials"
           }
         } catch (error) {
           // 에러 처리
           if (error.response) {
-            setMessage(error.response.data.message); // 서버에서 보낸 에러 메시지
+            setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
           } else {
             setMessage("An error occurred while connecting to the server.");
           }
@@ -46,7 +49,7 @@ function Login(){
             
             <div className="flex flex-col flex-auto gap-1 bg-inherit pt-5 p-10" style={{ width: '100vw', height: '100%', maxWidth:"400px" }}>
                 <input className="flex login-input-bar id" content={id} onChange={(e)=>setId(e.target.value)} placeholder="아이디를 입력하세요"/>
-                <input className="flex login-input-bar pw" content={pw} onChange={(e)=>setId(e.target.value)} placeholder="비밀번호를 입력하세요"/>
+                <input className="flex login-input-bar pw" content={pw} onChange={(e)=>setPw(e.target.value)} placeholder="비밀번호를 입력하세요"/>
                 <div className="flex flex-row gap-0.5 text-xs bg-inherit m-0">
                     <input className="flex-none ml-0.5" type="checkbox" checked={logKeep} onChange={()=>setLogKeep((prev)=>!prev)}/>
                     <div className="flex-auto login-text bg-inherit m-0 text-left">로그인 상태 유지 (자동로그인)</div>

@@ -12,13 +12,16 @@ import scheduleIcon from "../assets/images/schedule_icon.png";
 import scrapIcon from "../assets/images/scrap_icon.png";
 
 import {useState, useEffect} from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 function Home({student_data}){
 
   const [count, setCount] = useState(180);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const access_token = location.state.access_token ? location.state.access_token : "";
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -35,7 +38,7 @@ function Home({student_data}){
 
     return(
        <div className="relative w-full h-full bg-white">
-            <Header page="Home"/>
+            <Header page="Home" access_token={access_token}/>
             
             <div className="flex justify-between space-x-1 text-center home_tabs bg-white">
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-blue-900 id_tab cursor-pointer">신분증</button>
@@ -98,10 +101,10 @@ function Home({student_data}){
             <div className="absolute bottom-16 w-full bg-transparent">
                 <div className="flex justify-start space-x-3 h-16 px-4 mx-3 mt-10 box-border bg-neutral-200 rounded-lg shadow-lg">
                     <div className={`flex-none ${styles.shortcut} w-fit p-2 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
-                        <img className="bg-transparent" src={scheduleIcon} width="25px" height="25px" onClick={()=>navigate("/schedule")}/>
+                        <img className="bg-transparent" src={scheduleIcon} width="25px" height="25px" onClick={()=>navigate("/schedule", {state:{access_token: access_token}})}/>
                     </div>
                     <div className={`flex-none ${styles.shortcut} w-fit px-2 py-1.5 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
-                        <img className="bg-transparent" src={scrapIcon} width="25px" height="25px" onClick={()=>navigate("/keywordRegister")}/>
+                        <img className="bg-transparent" src={scrapIcon} width="25px" height="25px" onClick={()=>navigate("/keywordRegister", {state:{access_token: access_token}})}/>
                     </div>
                     <div className={`flex-none ${styles.shortcut} w-fit p-2 ml-0 my-auto rounded-full bg-transparent cursor-pointer`}>
                         <FaPlus className="bg-transparent text-gray-400 my-0.5"/>

@@ -8,7 +8,7 @@ import noticeIcon from "../assets/images/notice_icon.png";
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function Header({page, title, scheduleTitle, notice, selectedFavorites, selectedMark, prevPage, detail}){
+function Header({page, title, scheduleTitle, notice, selectedFavorites, selectedMark, prevPage, detail, access_token}){
     const navigate = useNavigate();
 
     console.log(page, title);
@@ -23,8 +23,8 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                     <p className="pt-1 bg-inherit text-base font-bold">성균관대학교</p>
                 </div>
                 <div className="flex-none flex justify-center space-x-1 bg-white">
-                    <img className="w-fit m-0 cursor-pointer" src={chatbotIcon} alt="chatbot_icon" height="25px" width="" onClick={()=>navigate("/chatbot")} />
-                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" onClick={()=>navigate("/scrapSchedule")}/>
+                    <img className="w-fit m-0 cursor-pointer" src={chatbotIcon} alt="chatbot_icon" height="25px" width="" onClick={()=>navigate("/chatbot", {state:{access_token: access_token}})} />
+                    <img className="w-fit m-0 cursor-pointer" src={noticeIcon} alt="notice_icon" height="25px" width="" onClick={()=>navigate("/scrapSchedule", {state:{access_token: access_token}})}/>
                     <IoIosSearch className="bg-inherit cursor-pointer"/>
                 </div>
             </div>
@@ -33,7 +33,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if (page == "Schedule"){
         return(
             <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
-                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home")}/>
+                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home", {state:{access_token: access_token}})}/>
                 <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                     <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
                     <p className="flex-none pt-1 bg-inherit text-base font-bold">2024년 학사일정표</p>
@@ -44,7 +44,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if (page == "ScheduleDetail"){
         return(
             <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
-                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/schedule", {state:{favorites:selectedFavorites}})}/>
+                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/schedule", {state:{favorites:selectedFavorites, access_token: access_token}})}/>
                 <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                     <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
                     <p className="flex-none pt-1 bg-inherit text-base font-bold">선택 일정 관련 공지사항</p>
@@ -56,7 +56,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if(page == "selectedNotice"){
         return(
             <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 px-4 pl-2 text-3xl border-b-stone-400 bg-white">
-                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate(-1, {state:{notice:notice, title:scheduleTitle, selectedMark: selectedMark}})}/>
+                <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate(-1, {state:{notice:notice, title:scheduleTitle, selectedMark: selectedMark, access_token: access_token}})}/>
                 <div className="flex flex-auto justify-center w-full gap-1 bg-inherit h-full">
                     <img className="flex-none w-fit m-0" src={skkuLogo2} alt="skku_logo" height="25px" width="" />
                     <div className="flex-auto flex flex-row bg-inherit">
@@ -74,7 +74,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
                 {/* 뒤로가기 버튼 */}
                 <IoIosArrowBack 
                     className="flex-none bg-inherit cursor-pointer" 
-                    onClick={() => navigate(detail=="detail"? -1: "/home")} 
+                    onClick={() => navigate(detail=="detail"? -1: "/home", {state:{access_token: access_token}})} 
                 />
                 <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                     <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
@@ -87,7 +87,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if(page == "keywordRegister"){
         return(
         <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
-            <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home")}/>
+            <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home", {state:{access_token: access_token}})}/>
             <div className="flex flex-auto justify-center gap-1 bg-inherit h-full">
                 <p className="flex-none pt-1 bg-inherit text-base font-bold">관심 공지 등록 및 확인</p>
             </div>
@@ -96,7 +96,7 @@ function Header({page, title, scheduleTitle, notice, selectedFavorites, selected
     else if (page == "chatbot"){
         return(
         <div className="flex flex-unwrap justify-center space-x-2 w-full h-14 p-3 text-3xl border-b-stone-400 bg-white">
-            <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home")}/>
+            <IoIosArrowBack className="flex-none bg-inherit mt-1 cursor-pointer" onClick={() => navigate("/home", {state:{access_token: access_token}})}/>
             <div className="flex flex-auto justify-center bg-inherit h-full">
                 <img className="flex-none h-full m-0" src={skkuLogo2} alt="skku_logo"  />
                 <p className="flex-none pt-1 bg-inherit text-base font-bold">성균관대학교</p>

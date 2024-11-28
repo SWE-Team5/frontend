@@ -1,15 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmarkSharp } from "react-icons/io5";
 import ExternalPage from "../components/ExternalPage";
 import Header from "../components/Header";
 import { BiBorderBottom } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 function Register({ onBack }) {
+
   const navigate = useNavigate();
+  const location = useLocation();
   
+  const access_token = location.state.access_token ? location.state.access_token : "";
+
+  const access_token_with_header = "Bearer " + access_token;
+
   const [keywords, setKeywords] = useState([]);
+
+  useEffect(async () =>{
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    console.log("inputKeyword", inputKeyword);
+
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/user/keyword",
+        {        access_token : access_token_with_header        }
+      );
+      console.log("response", response);
+        // 서버로부터 받은 응답 처리
+        if (response.data.msg === "get registerd keyword success") {
+        console.log("response data", response.data);
+        setKeywords(response.data.data);
+        setMessage(response.data.msg); // "register keyword successful"
+      } else {
+        setMessage(response.data.msg); // "Invalid credentials"
+      }
+    } catch (error) {
+      // 에러 처리
+      if (error.response) {
+        setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+        setMessage("An error occurred while connecting to the server.");
+      }
+    }
+
+  }, [])
+  
   const [inputKeyword, setInputKeyword] = useState("");
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
@@ -32,19 +69,74 @@ function Register({ onBack }) {
     },
   ];
 
-  const addKeyword = () => {
-    if (inputKeyword.trim() && !keywords.includes(inputKeyword)) {
-      setKeywords([...keywords, inputKeyword]);
+  const addKeyword = async (e) => {
+
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    console.log("inputKeyword", inputKeyword);
+
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/user/keyword", {
+        keyword: inputKeyword,
+        access_token : access_token_with_header
+      });
+      console.log("response", response);
+        // 서버로부터 받은 응답 처리
+      if (response.data.msg === "regist keyword success") {
+        console.log("response data", response.data);
+        setMessage(response.data.msg); // "register keyword successful"
+        if (!keywords.includes(inputKeyword)) {
+          setKeywords([...keywords, {
+            "keyword": inputKeyword,
+            "keywordid": response.data.keywordid,
+            "new": 0
+          }]);
+        }
+      } else {
+        setMessage(response.data.msg); // "Invalid credentials"
+      }
+    } catch (error) {
+      // 에러 처리
+      if (error.response) {
+        setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+        setMessage("An error occurred while connecting to the server.");
+      }
     }
+
     setInputKeyword("");
   };
 
-  const handleKeywordClick = (keyword) => {
+  const handleKeywordClick = async (keyword, e) => {
     setClickedKeyword(keyword);
-    const matchingNotices = notices.filter((notice) =>
-      notice.title.includes(keyword)
-    );
-    setFilteredNotices(matchingNotices);
+
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    console.log("keyword Click");
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/user/${keyword.keywordid}`, {
+        access_token : access_token_with_header
+      });
+      console.log("response", response);
+        // 서버로부터 받은 응답 처리
+      if (response.data.msg === "get regist keyword notice success") {
+        console.log("response data", response.data);
+        setMessage(response.data.msg); // "register keyword successful"
+        // const matchingNotices = notices.filter((notice) =>
+        //   notice.title.includes(keyword)
+        // );
+        setFilteredNotices(response.data.data);
+
+      } else {
+        setMessage(response.data.msg); // "Invalid credentials"
+      }
+    } catch (error) {
+      // 에러 처리
+      if (error.response) {
+        setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+        setMessage("An error occurred while connecting to the server.");
+      }
+    }
+
   };
 
   const handleNoticeClick = (url) => {
@@ -96,7 +188,7 @@ function Register({ onBack }) {
               className="flex-1 p-2 border border-gray-300 rounded-md shadow-sm"
             />
             <button
-              onClick={addKeyword}
+              onClick={(e) => addKeyword(e)}
               className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm"
             >
               등록
@@ -112,16 +204,16 @@ function Register({ onBack }) {
               </h3>
               <ul className="pt-3 space-y-2" style={{minHeight:"100px", backgroundColor:"#dee2e6", borderRadius:"5px"}}>
                 {keywords.map((keyword, index) => (
-                  <li key={index} className="text-xs bg-inherit">
+                  <li key={keyword.keywordid} className="text-xs bg-inherit">
                     <span
                       className={`cursor-pointer ${
                         clickedKeyword === keyword
                           ? "font-bold text-blue-600"
                           : ""
                       } bg-inherit`}
-                      onClick={() => handleKeywordClick(keyword)}
+                      onClick={(e) => handleKeywordClick(keyword, e)}
                     >
-                      {keyword}
+                      {keyword.keyword}
                     </span>
                   </li>
                 ))}
