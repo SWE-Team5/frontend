@@ -15,6 +15,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import dayjs from "dayjs"; // 날짜 포맷팅 라이브러리
+import axios from "axios";
 
 dayjs.locale("ko");
 
@@ -25,19 +26,21 @@ function Schedule(){
     const navigate = useNavigate();
     const location = useLocation();
 
-
+    const access_token = location.state?.access_token ? location.state.access_token : "" ;
+    const access_token_with_header = "Bearer " + access_token;
+    const [message, setMessage] = useState("");
 
     const [todos, setTodos] = useState([
-        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: [], new: 0},
-        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[], new: 0},
+        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: [], new: 0, keywordid: ""},
+        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[], new: 0, keywordid: ""},
         {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07',
           notice: [{title : '2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)', read : 1, url : ""},
             {title:'2024학년도 2학기 학사과정 조기졸업 신청 안내', read : 0, url : "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=119786&article.offset=0&articleLimit=10&srSearchVal=2024%EB%85%84+%EC%97%AC%EB%A6%84+%EC%A0%84%EC%B2%B4+%ED%95%99%EC%9C%84%EC%88%98%EC%97%AC%EC%8B%9D+%EC%B0%B8%EC%84%9D%28%EC%8B%A0%EC%B2%AD%29+%EC%95%88%EB%82%B4"},
             {title:'2024년 금신사랑장학생 선발 안내', read : 1, url : ""},
           ]
-        , new:1},
+        , new:1, keywordid: ""},
         {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07',
-          notice: [], new:0
+          notice: [], new:0, keywordid: ""
         },
     ]);
 
@@ -105,6 +108,7 @@ function Schedule(){
             end: new Date(event.end),
             notice: event.notice,
             new: event.new,
+            keywordid: event.keywordid,
             showDate: group.isFirstOutput || idx === 0, // 첫 번째 출력 시만 날짜 표시
           })):{};
         });
@@ -131,6 +135,7 @@ function Schedule(){
               titles: [], // 이벤트 제목을 배열로 저장
               notices: [],
               news :[],
+              keywordids: [],
               showDate : event.showDate
             };
           }
@@ -138,6 +143,7 @@ function Schedule(){
           groupedEvents[key].titles.push(event.title);
           groupedEvents[key].notices.push(event.notice);
           groupedEvents[key].news.push(event.new); // 제목 추가
+          groupedEvents[key].keywordids.push(event.keywordid);
         });
       
         return Object.keys(groupedEvents).map((key) => {
@@ -149,6 +155,7 @@ function Schedule(){
             end: group.end,
             notice:group.notices.length > 1 ? group.notices : group.notices[0],
             new :group.news.length > 1 ? group.news : group.news[0],
+            keywordid : group.keywordids.length > 1 ? group.keywordids : group.keywordids[0],
             showDate : group.showDate
           };
         });
@@ -213,49 +220,149 @@ function Schedule(){
     
       };
 
-    const eventClickHandler = (info) => {
+    const eventClickHandler = async (info, e) => {
       // info.preventDefault();
 
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo.id === info.event.id ? { ...todo, new: 0 } : todo
-        )
-      );
+      // setTodos((prevTodos) =>
+      //   prevTodos.map((todo) =>
+      //     todo.id === info.event.id ? { ...todo, new: 0 } : todo
+      //   )
+      // );
+
+      e.preventDefault();
 
       console.log("click", info);
+      
+      try {
+        console.log("Fetching schedule-related notices...");
+        const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
+            access_token: access_token_with_header,
+            title: info.event.title
+        });
+
+        if (response.data.msg === "get schedule-related notices success") {
+          const relatedNotice = response.data.data.map((item) => ({
+            id: item.noti_id,
+            title: item.title,
+            url: item.url,
+            read: item.read,
+            isBookMarked: item.isBookMarked,
+          }));
+
+          if(response.data.count > 0)
+            navigate("/schedule/detail", {state:{ title:info.event.title, notice: relatedNotice, selectedFavorites: selectedFavorites, access_token: access_token}});
+
+          setMessage(response.data.msg);
+        } else {
+          setMessage(response.data.msg);
+        }
+      } catch (error) {
+        if (error.response) {
+          setMessage(error.response.data.msg);
+        } else {
+          setMessage("An error occurred while connecting to the server.");
+        }
+      }
+
       // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-      if(info.event.extendedProps.notice.length > 0)
-        navigate("/schedule/detail", {state:{ title:info.event.title, notice: info.event.extendedProps.notice, selectedFavorites: selectedFavorites }});
+      // if(info.event.extendedProps.notice.length > 0)
+      //   navigate("/schedule/detail", {state:{ title:info.event.title, notice: info.event.extendedProps.notice, selectedFavorites: selectedFavorites, access_token: access_token}});
     };
 
-    const eventClickHandler2 = (event) => {
+    const eventClickHandler2 = async (event, e) => {
       // info.preventDefault();
       console.log(event);
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo.id === event.id ? { ...todo, new: 0 } : todo
-        )
-      );
+      // setTodos((prevTodos) =>
+      //   prevTodos.map((todo) =>
+      //     todo.id === event.id ? { ...todo, new: 0 } : todo
+      //   )
+      // );
+
+      e.preventDefault();
+
+      try {
+        console.log("Fetching schedule-related notices...");
+        const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
+            access_token: access_token_with_header,
+            title: event.title
+        });
+
+        if (response.data.msg === "get schedule-related notices success") {
+          const relatedNotice = response.data.data.map((item) => ({
+            id: item.noti_id,
+            title: item.title,
+            url: item.url,
+            read: item.read,
+            isBookMarked: item.isBookMarked,
+          }));
+
+          if(response.data.count > 0)
+            navigate("/schedule/detail", {state:{ title:event.title, notice: relatedNotice, selectedFavorites: selectedFavorites, access_token: access_token}});
+
+          setMessage(response.data.msg);
+        } else {
+          setMessage(response.data.msg);
+        }
+      } catch (error) {
+        if (error.response) {
+          setMessage(error.response.data.msg);
+        } else {
+          setMessage("An error occurred while connecting to the server.");
+        }
+      }
 
       // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-      if(event.extendedProps.notice.length > 0)
-        navigate("/schedule/detail", {state:{ title:event.title, notice: event.extendedProps.notice, selectedFavorites: selectedFavorites }});
+      // if(event.extendedProps.notice.length > 0)
+      //   navigate("/schedule/detail", {state:{ title:event.title, notice: event.extendedProps.notice, selectedFavorites: selectedFavorites }});
     };
 
-    const eventClickHandler3 = (event) => {
+    const eventClickHandler3 = async (event, e) => {
       // info.preventDefault();
       console.log("click3", event);
-      setTodos((prevTodos) =>{
-        const updatedTodos = prevTodos.map((todo) =>(
-          todo.id === event.id ? { ...todo, new: 0 } : todo
-        ))
-        console.log("click3 ut",updatedTodos);
-        return updatedTodos;
-    });
+      // setTodos((prevTodos) =>{
+      //   const updatedTodos = prevTodos.map((todo) =>(
+      //     todo.id === event.id ? { ...todo, new: 0 } : todo
+      //   ))
+      //   console.log("click3 ut",updatedTodos);
+      //   return updatedTodos;
+      // });
+
+      e.preventDefault();
+
+      try {
+        console.log("Fetching schedule-related notices...");
+        const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
+            access_token: access_token_with_header,
+            title: event.title
+        });
+
+        if (response.data.msg === "get schedule-related notices success") {
+          const relatedNotice = response.data.data.map((item) => ({
+            id: item.noti_id,
+            title: item.title,
+            url: item.url,
+            read: item.read,
+            isBookMarked: item.isBookMarked,
+          }));
+
+          if(response.data.count > 0)
+            navigate("/schedule/detail", {state:{ title:event.title, notice: relatedNotice, selectedFavorites: selectedFavorites, access_token: access_token}});
+
+          setMessage(response.data.msg);
+        } else {
+          setMessage(response.data.msg);
+        }
+      } catch (error) {
+        if (error.response) {
+          setMessage(error.response.data.msg);
+        } else {
+          setMessage("An error occurred while connecting to the server.");
+        }
+      }
 
       // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-      if(event.notice.length > 0)
-        navigate("/schedule/detail", {state:{ title:event.title, notice: event.notice, selectedFavorites: selectedFavorites }});
+      // if(event.notice.length > 0)
+      //   navigate("/schedule/detail", {state:{ title:event.title, notice: event.notice, selectedFavorites: selectedFavorites }});
     };
 
     // const [writtenDate, setWrittenDate] = useState([]);
@@ -286,13 +393,114 @@ function Schedule(){
     // const favorites = location.state.favorites ? location.state.favorites:{};
     const [selectedFavorites, setSelectedFavorites] = useState({});
   
+    useEffect(() => {
+      // keywordid가 빈 문자열이 아닌 요소 필터링
+
+      const fetchData = async () => {
+        try {
+          console.log("Fetching registered schedule...");
+          const response = await axios.get(`http://127.0.0.1:5000/user/scrap`, {
+              access_token: access_token_with_header
+          });
+  
+          if (response.data.msg === "get scrap notice success") {
+            const updatedTodos = todos.map((todo) => {
+              const matchingData = response.data.data.find((item) => item.keyword === todo.title);
+              if (matchingData) {
+                setSelectedFavorites((prevState) => ({
+                  ...prevState,
+                  [todo.id]: true, // 해당 이벤트의 별표 상태를 반전시킴
+                }));
+                return {
+                  ...todo,
+                  keywordid: matchingData.keywordid,
+                  new: matchingData.new ? 1 : 0,
+                };
+              }
+              return todo;
+            });
+            setTodos(updatedTodos);
+
+            setMessage(response.data.msg);
+          } else {
+            setMessage(response.data.msg);
+          }
+        } catch (error) {
+          if (error.response) {
+            setMessage(error.response.data.msg);
+          } else {
+            setMessage("An error occurred while connecting to the server.");
+          }
+        }
+      };
+
+      fetchData();
+
+    }, []);
+
     // 별표 클릭 시 상태 업데이트 함수
-    const toggleFavorite = (eventId) => {
-      console.log("star togglefavor", eventId)
+    const toggleFavorite = async (event, e, eventKeywordId) => {
+      console.log("star togglefavor", event.id)
       setSelectedFavorites((prevState) => ({
         ...prevState,
-        [eventId]: !prevState[eventId], // 해당 이벤트의 별표 상태를 반전시킴
+        [event.id]: !prevState[event.id], // 해당 이벤트의 별표 상태를 반전시킴
       }));
+
+      e.preventDefault();
+
+      if(selectedFavorites[event.id]){
+        try {
+          console.log("Fetching schedule-related notices...");
+          const response = await axios.delete(`http://127.0.0.1:5000/user/${eventKeywordId}`, {
+              access_token: access_token_with_header
+          });
+  
+          if (response.data.msg === "delete success") {
+            setTodos((prevTodos) =>
+              prevTodos.map((todo) =>
+                todo.id === event.id ? { ...todo, keywordid: "" } : todo
+              )
+            );
+            console.log("response data", response.data);
+            setMessage(response.data.msg);
+          } else {
+            setMessage(response.data.msg);
+          }
+        } catch (error) {
+          if (error.response) {
+            setMessage(error.response.data.msg);
+          } else {
+            setMessage("An error occurred while connecting to the server.");
+          }
+        }
+      }
+      else{
+        try {
+          console.log("Fetching schedule-related notices...");
+          const response = await axios.post(`http://127.0.0.1:5000/user/keyword`, {
+              access_token: access_token_with_header,
+              keyword: event.title
+          });
+  
+          if (response.data.msg === "regist keyword success") {
+            setTodos((prevTodos) =>
+              prevTodos.map((todo) =>
+                todo.id === event.id ? { ...todo, keywordid: response.data.keywordid } : todo
+              )
+            );
+            console.log("response data", response.data);
+            setMessage(response.data.msg);
+          } else {
+            setMessage(response.data.msg);
+          }
+        } catch (error) {
+          if (error.response) {
+            setMessage(error.response.data.msg);
+          } else {
+            setMessage("An error occurred while connecting to the server.");
+          }
+        }
+      }
 
       // // 상태 변경 후 FullCalendar 이벤트 강제 리렌더링
       // setTimeout(() => {
@@ -400,6 +608,7 @@ function Schedule(){
             printedEventIds, eventKey, currentEvents, 
             printedEventIds.size, isScheInOrder, printedEventIds.has(event.id),
             arg.event.title, event.title)
+
           if (printedEventIds.has(event.id) || !isScheInOrder) {
             console.log("printed 2 true false", "return null")
             return null; // Skip rendering if already printed
@@ -411,8 +620,7 @@ function Schedule(){
           var printedEventKeys = false;
           if(event.id > 1){
             printedEventKeys = eventKey == prevEventKey;
-            console.log("printed EventKeys", eventKey == prevEventKey, eventKey,prevEventKey
-            )
+            console.log("printed EventKeys", eventKey == prevEventKey, eventKey,prevEventKey)
           
           }
 
@@ -425,7 +633,8 @@ function Schedule(){
                 end: event.end,
                 title:event.title.split("@")[i],
                 notice: event.extendedProps.notice[i],
-                new: event.extendedProps.new[i]
+                new: event.extendedProps.new[i],
+                keywordid: event.extendedProps.keywordid[i]
               }];
             }
             
@@ -447,10 +656,10 @@ function Schedule(){
                   {events.map((event)=>(
                     <div key={event.id} className="flex flex-auto event-title align-middle p-1.5 m-0" style={{backgroundColor: selectedFavorites[event.id] ? 'rgb(105, 173, 1)': event.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
                         <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'9px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}
-                         onClick={(e)=>{e.stopPropagation();eventClickHandler3(event)}}>
+                         onClick={(e)=>{e.stopPropagation();eventClickHandler3(event, e)}}>
                             {event.title} <p className=" bg-inherit" style={{color:"red", display: event.new ? "inline-block" : "none"}}>new</p>
                         </div>
-                        <div className="flex-none event-favorite align-middle my-auto" style={{ backgroundColor:selectedFavorites[event.id] ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(e) => {e.preventDefault();e.stopPropagation();toggleFavorite(event.id)}}>
+                        <div className="flex-none event-favorite align-middle my-auto" style={{ backgroundColor:selectedFavorites[event.id] ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(e) => {e.preventDefault();e.stopPropagation();toggleFavorite(event, e, event.keywordid)}}>
                             <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:selectedFavorites[event.id] ? 'rgb(105, 173, 1)' : "inherit", color: selectedFavorites[event.id] ? 'yellow' : 'gray'} }>
                               <FaStar className="bg-inherit my-auto"/>
                             </span> {/* 별표 아이콘 */}
@@ -460,11 +669,11 @@ function Schedule(){
                   </div>
                   : <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)': event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
                     <div className="flex-auto align-middle " style={{paddingTop:"2px" ,fontSize:'9px', fontWeight:"bold", backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}
-                      onClick={(e)=>{e.stopPropagation();eventClickHandler2(event)}}
+                      onClick={(e)=>{e.stopPropagation();eventClickHandler2(event, e)}}
                       >
                         {event.title} <p className=" bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</p>
                     </div>
-                    <div className="flex-none event-favorite align-middle my-auto z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event.id); console.log("star", isFavorite)}}>
+                    <div className="flex-none event-favorite align-middle my-auto z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event, event, arg.event.extendedProps.keywordid); console.log("star", isFavorite)}}>
                         <span className="event-favorite-star align-middle my-auto bg-inherit cursor-pointer" style={{backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit", color: isFavorite ? 'yellow' : 'gray'} }>
                           <FaStar className="bg-inherit my-auto"/>
                         </span> {/* 별표 아이콘 */}
@@ -479,12 +688,12 @@ function Schedule(){
           // <Link className="w-full p-0" to={{pathname:event.notice ? "/scheduleDetail":"", state:{notice : arg.event.notice ? arg.event.notice : "", title : event.title}}}>
           <div className={`flex flex-row w-full cal-custom-event ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`} style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray'}}  >
               <div className="flex flex-auto event-title bg-inherit p-1.5" style={{fontSize:'9.5px', backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}}
-                  onClick={()=>{eventClickHandler2(event)}}
+                  onClick={(e)=>{eventClickHandler2(event, e)}}
               >
                 <div className="flex-none bg-inherit">{event.title} </div>
                 <div className="flex-auto ml-1 bg-inherit" style={{color:"red", display: event.extendedProps.new ? "inline-block" : "none"}}>new</div>
               </div>
-              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5 z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event.id); }}>
+              <div className="flex-none event-favorite bg-inherit my-auto pt-0.5 z-10" style={{ backgroundColor:isFavorite ? 'rgb(105, 173, 1)' : "inherit"}} onClick={(event) => {event.stopPropagation();toggleFavorite(arg.event, event, arg.event.extendedProps.keywordid); }}>
                   <div className="event-favorite-star bg-inherit my-auto cursor-pointer" style={{ fontSize:"15px", color: isFavorite ? 'yellow' : 'gray', backgroundColor: isFavorite ? 'rgb(105, 173, 1)' : 'inherit'}}>
                     <FaStar className="bg-inherit my-auto" />
                   </div> {/* 별표 아이콘 */}
@@ -532,7 +741,7 @@ function Schedule(){
                     handleWindowResize={true}
                     dragScroll={true}
                     locale="ko"
-                    eventClick={eventClickHandler}
+                    eventClick={(info, e) => eventClickHandler(info, e)}
                     // eventDidMount={eventDidMountHandler}
                     listDayFormat={{
                         weekday: "short",

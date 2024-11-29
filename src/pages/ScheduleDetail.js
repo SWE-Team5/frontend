@@ -11,17 +11,23 @@ import sort from "../assets/images/sort.png";
 import React, { Component } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import axios from "axios";
+
 function ScheduleDetail({}){
     const location = useLocation();
 
     const navigate = useNavigate();
 
     console.log('detail', location.state)
-    const notices = location.state.notice ? location.state.notice : [];
+    const notices = location.state?.notice ? location.state.notice : [];
     const [sortedNotices, setSortedNotices] = useState(notices.sort((a, b) => a.read - b.read));
-    const title = location.state.title ? location.state.title : "";
-    const selectedFavorites = location.state.selectedFavorites ? location.state.selectedFavorites : {};
-    const preMark = location.state.selectedMark ? location.state.selectedMark : {};
+    const title = location.state?.title ? location.state.title : "";
+    const selectedFavorites = location.state?.selectedFavorites ? location.state.selectedFavorites : {};
+    const preMark = location.state?.selectedMark ? location.state.selectedMark : {};
+
+    const access_token = location.state?.access_token ? location.state.access_token : "" ;
+    const access_token_with_header = "Bearer " + access_token;
+    const [message, setMessage] = useState("");
     // const title = '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청';
     // const notice = ['2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)',
     //     '2024학년도 2학기 학사과정 조기졸업 신청 안내',
@@ -32,14 +38,63 @@ function ScheduleDetail({}){
     const [content, setContent] = useState("");
 
     const [selectedMark, setSelectedMark] = useState(preMark ? preMark : {});
-    const toggleMark = (noticeIdx) => {
+    const toggleMark = async (noticeIdx, e, noticeID) => {
         setSelectedMark((prevState) => ({
           ...prevState,
           [noticeIdx]: !prevState[noticeIdx], // 해당 이벤트의 별표 상태를 반전시킴
         }));
+
+        e.preventDefault();
+
+        if(selectedMark[noticeIdx]){
+            try {
+            const response = await axios.delete(`http://127.0.0.1:5000/user/noti/${noticeID}`,
+                {        access_token : access_token_with_header        }
+            );
+            console.log("response.data", response.data);
+                // 서버로부터 받은 응답 처리
+            if (response.data.msg === "delete success") {
+                console.log("response data", response.data);
+                setMessage(response.data.msg); // "register keyword successful"
+            } else {
+                setMessage(response.data.msg); // "Invalid credentials"
+            }
+            } catch (error) {
+            // 에러 처리
+            if (error.response) {
+                setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+            } else {
+                setMessage("An error occurred while connecting to the server.");
+            }
+            }
+        }
+        else{
+            try {
+                const response = await axios.post(`http://127.0.0.1:5000/user/noti/${noticeID}`,
+                    {        access_token : access_token_with_header, is_scrap : 1        }
+                );
+                console.log("response.data", response.data);
+                    // 서버로부터 받은 응답 처리
+                if (response.data.msg === "scrap success") {
+                    console.log("response data", response.data);
+                    setMessage(response.data.msg); // "register keyword successful"
+                } else {
+                    setMessage(response.data.msg); // "Invalid credentials"
+                }
+                } catch (error) {
+                // 에러 처리
+                if (error.response) {
+                    setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+                } else {
+                    setMessage("An error occurred while connecting to the server.");
+                }
+                }
+        }
+        
+
       };
 
-    const eventClickHandler = (notice, idx) => {
+    const eventClickHandler = async (notice, idx, e) => {
         console.log("click", notice, idx);
         var propsNotice = sortedNotices;
         setSortedNotices((prevNotices) => {
@@ -52,8 +107,32 @@ function ScheduleDetail({}){
             return updatedNotices.sort((a, b) => a.read - b.read);
         });
         console.log("propsNotice",propsNotice, sortedNotices)
+
+        e.preventDefault();
+        
+        try {
+          console.log("Edit schedule-related notices...");
+          const response = await axios.patch(`http://127.0.0.1:5000/user/noti/${notice.id}`, {
+              access_token: access_token_with_header,
+              update: "read"
+          });
+  
+          if (response.data.msg === "edit related notice read success") {
+            
+            setMessage(response.data.msg);
+          } else {
+            setMessage(response.data.msg);
+          }
+        } catch (error) {
+          if (error.response) {
+            setMessage(error.response.data.msg);
+          } else {
+            setMessage("An error occurred while connecting to the server.");
+          }
+        }
+
         // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark, page:"scheduleDetail" }});
+        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark, page:"scheduleDetail", access_token:access_token }});
     };
 
     const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
@@ -105,10 +184,11 @@ function ScheduleDetail({}){
                             <button className="idx_btn text-md">스크랩 공지</button>
                         </div>
                     </div> */}
-                    <div className="flex-auto">
-                        <div className="pt-2 flex">
-                            <div className="flex-auto related_notice_title font-bold text-s w-full ellipsText text-left">{title}</div>
-                            <div className="flex-none text-left font-bold">...</div>
+                    <div className="flex-auto w-full">
+                        <div className="pt-2 flex w-full overflow-hidden">
+                            <div className="flex-auto related_notice_title font-bold text-s ellipsText text-left 
+                                overflow-hidden whitespace-nowrap text-ellipsis">{title}</div>
+                            {/* <div className="flex-none text-left font-bold">...</div> */}
                         </div>
                         <div className="pb-2 related_notice_title font-bold text-s w-full block text-left"> 관련 공지 </div>
 
@@ -137,11 +217,11 @@ function ScheduleDetail({}){
                                 return(
                                     <div className="w-full">
                                         <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "lightgray" : "darkgray"}} key={idx}
-                                        onClick={()=>{eventClickHandler(notice, idx)}}>
+                                        onClick={(e)=>{eventClickHandler(notice, idx, e)}}>
                                             <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
                                             <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 
                                             style={{boxSizing:"border-box", backgroundColor:"inherit", color: isMarked ? 'red' : 'gray'}}
-                                            onClick={(event)=>{event.stopPropagation();toggleMark(idx)}}>
+                                            onClick={(event)=>{event.stopPropagation();toggleMark(idx, event, notice.id)}}>
                                             <IoBookmarkSharp className="bg-inherit align-middle h-full m-auto pt-1" />
                                             </div> 
                                         </div>

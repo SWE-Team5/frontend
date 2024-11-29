@@ -125,12 +125,12 @@ function NotificationRelated() {
     }
     else{
       try {
-        const response = await axios.patch(`http://127.0.0.1:5000/user/noti/${notification.id}`,
-          {        access_token : access_token_with_header, update : "scrap"       }
+        const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notification.id}`,
+          {        access_token : access_token_with_header, is_scrap : 1      }
         );
         console.log("response.data", response.data);
           // 서버로부터 받은 응답 처리
-        if (response.data.msg === "edit related notice scrap success") {
+        if (response.data.msg === "scrap success") {
           console.log("response data", response.data);
           setMessage(response.data.msg); // "register keyword successful"
         } else {
