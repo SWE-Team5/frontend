@@ -6,7 +6,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function Login(){
-
+    const navigate = useNavigate();
     const [id, setId] = useState("");
     const [pw, setPw] = useState("");
     const [logKeep, setLogKeep] = useState(false);
