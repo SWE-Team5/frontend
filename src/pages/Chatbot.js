@@ -26,14 +26,10 @@ console.log(access_token);
 
     const input_edited = input.trim();
     try {
-      const response = await axios.post(`http://127.0.0.1:5000/chat`, {
-        
-        word : input_edited
-      }
-      ,
-    {
-      headers: { Authorization: access_token_with_header }
-    });
+      const response = await axios.post(`http://127.0.0.1:5000/chat`,
+        {word : input_edited}, 
+        {headers: { Authorization: access_token_with_header }
+      });
       console.log("response", response);
         // 서버로부터 받은 응답 처리
       if (response.data.msg === "chat response success") {
