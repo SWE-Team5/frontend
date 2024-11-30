@@ -6,7 +6,8 @@ import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function Login(){
-
+  const access_token = localStorage.getItem('access_token');
+console.log(access_token); 
     const navigate = useNavigate();
 
     const [id, setId] = useState("");
@@ -29,6 +30,7 @@ function Login(){
             if (response.data.msg === "login success") {
             console.log("response data", response.data);
             setMessage(response.data.msg); // "Login successful"
+            localStorage.setItem('access_token', response.data.access_token);
             navigate('/home', {state:{access_token:response.data.access_token}})
           } else {
             setMessage(response.data.msg); // "Invalid credentials"

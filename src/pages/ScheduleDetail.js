@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 function ScheduleDetail({}){
+    
     const location = useLocation();
 
     const navigate = useNavigate();
@@ -25,7 +26,8 @@ function ScheduleDetail({}){
     const selectedFavorites = location.state?.selectedFavorites ? location.state.selectedFavorites : {};
     const preMark = location.state?.selectedMark ? location.state.selectedMark : {};
 
-    const access_token = location.state?.access_token ? location.state.access_token : "" ;
+    const access_token = localStorage.getItem('access_token');
+    console.log(access_token); 
     const access_token_with_header = "Bearer " + access_token;
     const [message, setMessage] = useState("");
     // const title = '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청';
@@ -48,9 +50,10 @@ function ScheduleDetail({}){
 
         if(selectedMark[noticeIdx]){
             try {
-            const response = await axios.delete(`http://127.0.0.1:5000/user/noti/${noticeID}`,
-                {        access_token : access_token_with_header        }
-            );
+                const response = await axios.post(`http://127.0.0.1:5000/user/noti/${noticeID}`,
+                    { scrap: 0 },
+                    { headers: { Authorization: access_token_with_header } }
+                );
             console.log("response.data", response.data);
                 // 서버로부터 받은 응답 처리
             if (response.data.msg === "delete success") {
@@ -71,7 +74,8 @@ function ScheduleDetail({}){
         else{
             try {
                 const response = await axios.post(`http://127.0.0.1:5000/user/noti/${noticeID}`,
-                    {        access_token : access_token_with_header, is_scrap : 1        }
+                    { scrap: 1 },
+                    { headers: { Authorization: access_token_with_header } }
                 );
                 console.log("response.data", response.data);
                     // 서버로부터 받은 응답 처리

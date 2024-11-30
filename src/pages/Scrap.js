@@ -14,7 +14,8 @@ function NotificationApp() {
 
   const location = useLocation();
   
-  const access_token = location.state?.access_token ? location.state.access_token : "" ;
+  const access_token = localStorage.getItem('access_token');
+  console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   const [message, setMessage] = useState("");
@@ -64,7 +65,7 @@ function NotificationApp() {
       try {
         console.log("Fetching keywords and schedule...");
         const response = await axios.get("http://127.0.0.1:5000/user/keyword", {
-            access_token: access_token_with_header
+            headers: { Authorization: access_token_with_header }
         });
 
         if (response.data.msg === "get registerd keyword success") {
@@ -106,7 +107,7 @@ function NotificationApp() {
 
     try {
       const response = await axios.delete(`http://127.0.0.1:5000/user/${id}`,
-        {        access_token : access_token_with_header        }
+        {       headers: { Authorization: access_token_with_header }      }
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리
@@ -133,7 +134,7 @@ function NotificationApp() {
 
     try {
       const response = await axios.patch(`http://127.0.0.1:5000/user/ALL`,
-        {        access_token : access_token_with_header        }
+        {       headers: { Authorization: access_token_with_header }       }
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리
@@ -176,7 +177,7 @@ function NotificationApp() {
 
     try {
       const response = await axios.patch(`http://127.0.0.1:5000/user/${notification.id}`,
-        {        access_token : access_token_with_header        }
+        {        headers: { Authorization: access_token_with_header }     }
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리
@@ -197,7 +198,7 @@ function NotificationApp() {
 
     try {
       const response = await axios.get(`http://127.0.0.1:5000/user/${notification.id}`,
-        {        access_token : access_token_with_header        }
+        {       headers: { Authorization: access_token_with_header }    }
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리

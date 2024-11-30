@@ -26,7 +26,8 @@ function Schedule(){
     const navigate = useNavigate();
     const location = useLocation();
 
-    const access_token = location.state.access_token ? location.state.access_token : "";
+    const access_token = localStorage.getItem('access_token');
+    console.log(access_token);
     const access_token_with_header = "Bearer " + access_token;
 
     const [message, setMessage] = useState("");
@@ -309,10 +310,10 @@ function Schedule(){
       
       try {
         console.log("Fetching schedule-related notices...");
-        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, {
-          headers: { Authorization: access_token_with_header },
-            title: info.event.title
-        });
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+          { title: info.event.title },
+          { headers: { Authorization: access_token_with_header } }
+          );
 
         if (response.data.msg === "get schedule-related notices success") {
           const relatedNotice = response.data.data.map((item) => ({
@@ -354,10 +355,10 @@ function Schedule(){
       e.preventDefault();
 
       try {
-        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, {
-            headers : {Authorization: access_token_with_header},
-            title: event.title
-        });
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+          { title: event.title },
+          { headers: { Authorization: access_token_with_header } }
+        );
 
         if (response.data.msg === "get schedule-related notices success") {
           const relatedNotice = response.data.data.map((item) => ({
@@ -404,7 +405,7 @@ function Schedule(){
       try {
         console.log("Fetching schedule-related notices...");
         const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
-          headers : {Authorization: access_token_with_header},
+          headers : {Authorization: access_token_with_header}},{
           title: event.title
         });
 

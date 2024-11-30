@@ -11,7 +11,8 @@ function ScrapNotifications() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const access_token = location.state?.access_token ? location.state.access_token : "" ;
+  const access_token = localStorage.getItem('access_token');
+  console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   const [currentView, setCurrentView] = useState("scrap");

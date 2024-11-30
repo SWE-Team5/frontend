@@ -9,11 +9,11 @@ import axios from "axios";
 
 
 function Register({ onBack }) {
-
   const navigate = useNavigate();
   const location = useLocation();
   
-  const access_token = location.state.access_token ? location.state.access_token : "";
+  const access_token = localStorage.getItem('access_token');
+  console.log(access_token); 
 
   const access_token_with_header = "Bearer " + access_token;
 
@@ -156,12 +156,64 @@ function Register({ onBack }) {
     setIsAlertEnabled((prev) => !prev);
   };
 
-  const toggleIconColor = (index) => {
+  const toggleIconColor = async (index, e, notice) => {
+    console.log("index", index);
+    console.log("notice", notice);
+
     setItemColors((prevColors) =>
       prevColors.map((color, i) =>
         i === index ? (color === "gray" ? "red" : "gray") : color
       )
     );
+
+    e.preventDefault();
+
+    if(itemColors[index] === "gray"){
+      try {
+        const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.noti_id}`,
+          { scrap: 0 },
+          { headers: { Authorization: access_token_with_header } }
+        );
+      console.log("response.data", response.data);
+          // 서버로부터 받은 응답 처리
+      if (response.data.msg === "scrap success") {
+          console.log("response data", response.data);
+          setMessage(response.data.msg); // "register keyword successful"
+      } else {
+          setMessage(response.data.msg); // "Invalid credentials"
+      }
+      } catch (error) {
+      // 에러 처리
+      if (error.response) {
+          setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+          setMessage("An error occurred while connecting to the server.");
+      }
+      }
+  }
+  else{
+      try {
+          const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.noti_id}`,
+            { scrap: 1 },
+            { headers: { Authorization: access_token_with_header } }
+          );
+          console.log("response.data", response.data);
+              // 서버로부터 받은 응답 처리
+          if (response.data.msg === "scrap success") {
+              console.log("response data", response.data);
+              setMessage(response.data.msg); // "register keyword successful"
+          } else {
+              setMessage(response.data.msg); // "Invalid credentials"
+          }
+          } catch (error) {
+          // 에러 처리
+          if (error.response) {
+              setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+          } else {
+              setMessage("An error occurred while connecting to the server.");
+          }
+          }
+    }
   };
 
   return (
@@ -170,7 +222,7 @@ function Register({ onBack }) {
   // Render the ExternalPage if a notice is selected
   <div className="h-full flex flex-col">
     {/* Header Section */}
-    <Header page="keywordRegister" />
+    <Header page="keywordRegister" access_token={access_token} />
 
     {/* External Page */}
     <ExternalPage url={selectedNoticeURL} />
@@ -257,7 +309,7 @@ function Register({ onBack }) {
                               : "text-gray-500"
                           }`}
                           style={{width:"15px"}}
-                          onClick={() => toggleIconColor(index)}
+                          onClick={(e) => toggleIconColor(index, e, notice)}
                         />
                       </div>
                       

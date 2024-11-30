@@ -8,6 +8,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 function Chatbot({ onBack }) {
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { text: "안녕하세요? 저는 킹고봇입니다. 무엇을 도와드릴까요?", sender: "bot" },
@@ -15,8 +16,8 @@ function Chatbot({ onBack }) {
   const [input, setInput] = useState("");
 
   const location = useLocation();
-  
-  const access_token = location.state.access_token ? location.state.access_token : "";
+  const access_token = localStorage.getItem('access_token');
+console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   const handleSendMessage = async(e) => {

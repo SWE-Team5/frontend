@@ -8,7 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function SelectedNotice(){
     const location = useLocation();   
-
+    const access_token = localStorage.getItem('access_token');
+    console.log(access_token); 
     console.log(location.state)
     const url = location.state.noticeURL ? location.state.noticeURL : [];
     const title = location.state.title ? location.state.title : "";

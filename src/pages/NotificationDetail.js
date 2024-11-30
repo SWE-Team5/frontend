@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function NotificationDetail() {
+  const access_token = localStorage.getItem('access_token');
+console.log(access_token); 
   const { id } = useParams();
   const navigate = useNavigate();
   const [notification, setNotification] = useState(null);
