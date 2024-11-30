@@ -93,7 +93,7 @@ function Register({ onBack }) {
     try {
       const response = await axios.post(
       "http://127.0.0.1:5000/user/keyword",
-      { keyword: inputkw },
+      { keyword: inputkw, is_calendar: 0 },
       { headers: { Authorization: access_token_with_header } }
       );
       console.log("response", response);

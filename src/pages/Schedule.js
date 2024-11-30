@@ -550,10 +550,9 @@ function Schedule(){
       else{
         try {
           console.log("Fetching schedule-related notices...");
-          const response = await axios.post(`http://127.0.0.1:5000/user/keyword`, {
-            headers : {Authorization: access_token_with_header},
-              keyword: event.title
-          });
+          const response = await axios.post(`http://127.0.0.1:5000/user/keyword`, 
+            { keyword: event.title, is_calendar: 1 },
+            { headers: { Authorization: access_token_with_header } });
   
           if (response.data.msg === "regist keyword success") {
             setTodos((prevTodos) =>
