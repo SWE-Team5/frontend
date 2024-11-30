@@ -107,7 +107,7 @@ function NotificationApp() {
 
     try {
       const response = await axios.delete(`http://127.0.0.1:5000/user/${id}`,
-        {       headers: { Authorization: access_token_with_header }      }
+        {   headers: { Authorization: access_token_with_header } }
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리

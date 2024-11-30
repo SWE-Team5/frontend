@@ -33,12 +33,19 @@ function Register({ onBack }) {
         console.log("response", response);
           // 서버로부터 받은 응답 처리
           if (response.data.msg === "get registerd keyword success") {
-          console.log("response data", response.data);
-          setKeywords(response.data.data);
-          setMessage(response.data.msg); // "register keyword successful"
-        } else {
-          setMessage(response.data.msg); // "Invalid credentials"
-        }
+            console.log("response data", response.data);
+            setKeywords(response.data.data);
+  
+            const updatedItemColors = response.data.data.map(data =>
+              data.scrap === true ? "red" : "grey"
+            );
+    
+            console.log("updatedItemColors", updatedItemColors)
+            setItemColors(updatedItemColors);
+            setMessage(response.data.msg); // "register keyword successful"
+          } else {
+            setMessage(response.data.msg); // "Invalid credentials"
+          }
       } catch (error) {
         // 에러 처리
         if (error.response) {
