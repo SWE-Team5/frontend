@@ -27,7 +27,7 @@ function Register({ onBack }) {
 
       try {
         const response = await axios.get("http://127.0.0.1:5000/user/keyword",
-          {        access_token : access_token_with_header        }
+          { headers: { Authorization: access_token_with_header } }
         );
         console.log("response", response);
           // 서버로부터 받은 응답 처리
@@ -78,21 +78,22 @@ function Register({ onBack }) {
     console.log("inputKeyword", inputKeyword);
 
     const inputkw = inputKeyword.trim();
-
+    console.log("token", access_token_with_header);
     try {
-      const response = await axios.post("http://127.0.0.1:5000/user/keyword", {
-        keyword: inputkw,
-        access_token : access_token_with_header
-      });
+      const response = await axios.post(
+      "http://127.0.0.1:5000/user/keyword",
+      { keyword: inputkw },
+      { headers: { Authorization: access_token_with_header } }
+      );
       console.log("response", response);
-        // 서버로부터 받은 응답 처리
+      // 서버로부터 받은 응답 처리
       if (response.data.msg === "regist keyword success") {
         console.log("response data", response.data);
         setMessage(response.data.msg); // "register keyword successful"
         if (!keywords.includes(inputkw)) {
           setKeywords([...keywords, {
             "keyword": inputkw,
-            "keywordid": response.data.keywordid,
+            "keywordid": response.data.keyword_id,
             "new": 0
           }]);
         }
@@ -117,9 +118,8 @@ function Register({ onBack }) {
     e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
     console.log("keyword Click");
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/user/${keyword.keywordid}`, {
-        access_token : access_token_with_header
-      });
+      const response = await axios.get(`http://127.0.0.1:5000/user/${keyword.keywordid}`,
+        { headers: { Authorization: access_token_with_header } });
       console.log("response", response);
         // 서버로부터 받은 응답 처리
       if (response.data.msg === "get regist keyword notice success") {

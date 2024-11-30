@@ -25,8 +25,9 @@ function Chatbot({ onBack }) {
 
     const input_edited = input.trim();
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/chat/login/${input_edited}`, {
-        access_token : access_token_with_header
+      const response = await axios.post(`http://127.0.0.1:5000/chat`, {
+        headers: { Authorization: access_token_with_header },
+        word : input_edited
       });
       console.log("response", response);
         // 서버로부터 받은 응답 처리
@@ -37,7 +38,7 @@ function Chatbot({ onBack }) {
         setMessages([...messages, { text: input_edited, sender: "user" }]);
         setInput("");
         setTimeout(() => {
-          setMessages((prev) => [...prev, { text: response.data.res, sender: "bot" }]);
+          setMessages((prev) => [...prev, { text: response.data.response, sender: "bot" }]);
         }, 500);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
@@ -73,7 +74,7 @@ function Chatbot({ onBack }) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`mb-2 p-3 shadow-md rounded-lg text-sm ${
+            className={`mb-2 p-3 shadow-md rounded-lg text-sm break-words ${
               message.sender === "user"
                 ? "ml-auto mr-2 bg-white text-right max-w-[60%]" // Reduced max width and added `mr-2`
                 : "mr-auto bg-white text-left max-w-[70%] ml-2" // Added margin for bot messages
