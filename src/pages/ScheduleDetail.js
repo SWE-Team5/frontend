@@ -20,7 +20,7 @@ function ScheduleDetail({}){
     const navigate = useNavigate();
 
     console.log('detail', location.state)
-    const notices = location.state?.notice ? location.state.notice : [];
+    const [notices, setNotices] = useState(location.state?.notice ? location.state.notice : []);
     const [sortedNotices, setSortedNotices] = useState(notices.sort((a, b) => a.read - b.read));
     const title = location.state?.title ? location.state.title : "";
     const selectedFavorites = location.state?.selectedFavorites ? location.state.selectedFavorites : {};
@@ -35,6 +35,45 @@ function ScheduleDetail({}){
     //     '2024학년도 2학기 학사과정 조기졸업 신청 안내',
     //     '2024년 금신사랑장학생 선발 안내',
     //   ]
+
+    useEffect(()=>{
+        const fetchData = async()=>{
+            try {
+                console.log("Fetching schedule-related notices...");
+                const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+                  { title: title },
+                  { headers: { Authorization: access_token_with_header } }
+                  );
+        
+                if (response.data.msg === "get schedule-related notices success") {
+                  const relatedNotice = response.data.data.map((item) => ({
+                    id: item.noti_id,
+                    title: item.title,
+                    url: item.url,
+                    read: item.read,
+                    isBookMarked: item.isBookMarked,
+                  }));
+        
+                  setNotices(relatedNotice);
+                  setSortedNotices(relatedNotice.sort((a, b) => a.read - b.read));
+
+                  setMessage(response.data.msg);
+                } else {
+                  setMessage(response.data.msg);
+                }
+              } catch (error) {
+                if (error.response) {
+                  setMessage(error.response.data.msg);
+                } else {
+                  setMessage("An error occurred while connecting to the server.");
+                }
+              }
+        }
+
+        fetchData();
+    }, []);
+
+
 
     console.log("notices", notices);
     const [content, setContent] = useState("");
