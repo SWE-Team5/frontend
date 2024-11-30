@@ -27,9 +27,13 @@ console.log(access_token);
     const input_edited = input.trim();
     try {
       const response = await axios.post(`http://127.0.0.1:5000/chat`, {
-        headers: { Authorization: access_token_with_header },
+        
         word : input_edited
-      });
+      }
+      ,
+    {
+      headers: { Authorization: access_token_with_header }
+    });
       console.log("response", response);
         // 서버로부터 받은 응답 처리
       if (response.data.msg === "chat response success") {
@@ -75,11 +79,7 @@ console.log(access_token);
         {messages.map((message, index) => (
           <div
             key={index}
-<<<<<<< HEAD
-            className={`mb-2 p-3 shadow-md rounded-lg text-sm overflow-hidden ${
-=======
-            className={`mb-2 p-3 shadow-md rounded-lg text-sm break-words ${
->>>>>>> a69c2ec983d67ccf0710dcbdbd6d28cb17482477
+            className={`mb-2 p-3 shadow-md rounded-lg text-sm break-words break-all overflow-auto whitespace-pre-line ${
               message.sender === "user"
                 ? "ml-auto mr-2 bg-white text-right max-w-[60%]" // Reduced max width and added `mr-2`
                 : "mr-auto bg-white text-left max-w-[70%] ml-2" // Added margin for bot messages
