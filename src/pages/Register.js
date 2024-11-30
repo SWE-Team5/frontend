@@ -15,6 +15,7 @@ function Register({ onBack }) {
   const access_token = localStorage.getItem('access_token');
   console.log(access_token); 
 
+  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const access_token_with_header = "Bearer " + access_token;
 
   const [keywords, setKeywords] = useState([]);

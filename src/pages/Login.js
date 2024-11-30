@@ -53,7 +53,7 @@ console.log(access_token);
             
             <div className="flex flex-col flex-auto gap-1 bg-inherit pt-5 p-10" style={{ width: '100vw', height: '100%', maxWidth:"400px" }}>
                 <input className="flex login-input-bar id" content={id} onChange={(e)=>setId(e.target.value)} placeholder="아이디를 입력하세요"/>
-                <input className="flex login-input-bar pw" content={pw} onChange={(e)=>setPw(e.target.value)} placeholder="비밀번호를 입력하세요"/>
+                <input className="flex login-input-bar pw" content={pw} type="password" onChange={(e)=>setPw(e.target.value)} placeholder="비밀번호를 입력하세요"/>
                 <div className="flex flex-row gap-0.5 text-xs bg-inherit m-0">
                     <input className="flex-none ml-0.5" type="checkbox" checked={logKeep} onChange={()=>setLogKeep((prev)=>!prev)}/>
                     <div className="flex-auto login-text bg-inherit m-0 text-left">로그인 상태 유지 (자동로그인)</div>
