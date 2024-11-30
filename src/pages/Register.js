@@ -20,6 +20,7 @@ function Register({ onBack }) {
 
   const [keywords, setKeywords] = useState([]);
   const [message, setMessage] = useState("");
+  const [scrap, setScrap] = useState({});
 
   useEffect(()=>{
     const fetchData = async () =>{
@@ -140,12 +141,20 @@ function Register({ onBack }) {
         // );
         setFilteredNotices(response.data.data);
 
-        const updatedItemColors = response.data.data.map(data =>
-          data.scrap === true ? "red" : "grey"
-        );
+        const updatedScrap = response.data.data.reduce((acc, d) => {
+          if (d.scrap) {
+            acc[d.noti_id] = true; // d.noti_id를 키로, true를 값으로 설정
+          }
+          return acc; // 누적된 딕셔너리 반환
+        }, {});
+        setScrap(updatedScrap);
 
-        console.log("updatedItemColors", updatedItemColors)
-        setItemColors(updatedItemColors);
+        // const updatedItemColors = response.data.data.map(data =>
+        //   data.scrap === true ? "red" : "grey"
+        // );
+
+        // console.log("updatedItemColors", updatedItemColors)
+        // setItemColors(updatedItemColors);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
       }
@@ -184,12 +193,18 @@ function Register({ onBack }) {
 
     e.preventDefault();
 
+    setScrap((prevState) => ({
+      ...prevState,
+      [notice.noti_id]: !prevState[notice.noti_id], // 해당 이벤트의 별표 상태를 반전시킴
+    }));
+
     if(notice.scrap){
       setFilteredNotices((prev)=>
         prev.map((noti) =>
           noti.id === notice.noti_id ? { ...noti, scrap: 0 } : noti
         )
       )
+
       try {
         const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.noti_id}`,
           { scrap: 0 },
@@ -330,7 +345,7 @@ function Register({ onBack }) {
                         <IoBookmarkSharp
                           size={20}
                           className={`bg-inherit cursor-pointer ${
-                            notice.scrap
+                            scrap[notice.noti_id]
                               ? "text-red-500"
                               : "text-gray-500"
                           }`}
