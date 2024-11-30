@@ -73,7 +73,7 @@ function Chatbot({ onBack }) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`mb-2 p-3 shadow-md rounded-lg text-sm ${
+            className={`mb-2 p-3 shadow-md rounded-lg text-sm overflow-hidden ${
               message.sender === "user"
                 ? "ml-auto mr-2 bg-white text-right max-w-[60%]" // Reduced max width and added `mr-2`
                 : "mr-auto bg-white text-left max-w-[70%] ml-2" // Added margin for bot messages

@@ -20,6 +20,7 @@ function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
   const [message, setMessage] = useState("");
 
+
   useEffect(()=>{
     const fetchData = async () =>{
       // e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -51,8 +52,8 @@ function Register({ onBack }) {
   }, [])
   
   const [inputKeyword, setInputKeyword] = useState("");
-  const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
+  const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [filteredNotices, setFilteredNotices] = useState([]);
   const [clickedKeyword, setClickedKeyword] = useState("");
   const [selectedNoticeURL, setSelectedNoticeURL] = useState(null); // New state for selected notice URL
@@ -130,6 +131,14 @@ function Register({ onBack }) {
         // );
         setFilteredNotices(response.data.data);
 
+        const updatedItemColors = response.data.data.map((data)=>{
+          if(data.scrap == true){
+            return "red";
+          } else {
+            return "grey";
+          }
+        })
+        setItemColors(updatedItemColors);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
       }
@@ -156,12 +165,59 @@ function Register({ onBack }) {
     setIsAlertEnabled((prev) => !prev);
   };
 
-  const toggleIconColor = (index) => {
+  const toggleIconColor = async (index, e, notice) => {
     setItemColors((prevColors) =>
       prevColors.map((color, i) =>
         i === index ? (color === "gray" ? "red" : "gray") : color
       )
     );
+
+    e.preventDefault();
+
+    if(itemColors[index]){
+      try {
+      const response = await axios.delete(`http://127.0.0.1:5000/user/noti/${notice.id}`,
+          {        access_token : access_token_with_header        }
+      );
+      console.log("response.data", response.data);
+      // 서버로부터 받은 응답 처리
+      if (response.data.msg === "delete success") {
+          console.log("response data", response.data);
+          setMessage(response.data.msg); // "register keyword successful"
+      } else {
+          setMessage(response.data.msg); // "Invalid credentials"
+      }
+      } catch (error) {
+      // 에러 처리
+      if (error.response) {
+          setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+      } else {
+          setMessage("An error occurred while connecting to the server.");
+      }
+      }``
+  }
+  else{
+      try {
+          const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.id}`,
+              {        access_token : access_token_with_header, is_scrap : 1        }
+          );
+          console.log("response.data", response.data);
+              // 서버로부터 받은 응답 처리
+          if (response.data.msg === "scrap success") {
+              console.log("response data", response.data);
+              setMessage(response.data.msg); // "register keyword successful"
+          } else {
+              setMessage(response.data.msg); // "Invalid credentials"
+          }
+          } catch (error) {
+          // 에러 처리
+          if (error.response) {
+              setMessage(error.response.data.msg); // 서버에서 보낸 에러 메시지
+          } else {
+              setMessage("An error occurred while connecting to the server.");
+          }
+          }
+    }
   };
 
   return (
@@ -257,7 +313,7 @@ function Register({ onBack }) {
                               : "text-gray-500"
                           }`}
                           style={{width:"15px"}}
-                          onClick={() => toggleIconColor(index)}
+                          onClick={(e) => toggleIconColor(index, e, notice)}
                         />
                       </div>
                       
