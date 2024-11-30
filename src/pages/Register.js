@@ -21,8 +21,6 @@ function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
   const [message, setMessage] = useState("");
 
-  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
-
   useEffect(()=>{
     const fetchData = async () =>{
       // e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
