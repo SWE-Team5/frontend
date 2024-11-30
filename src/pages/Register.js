@@ -131,13 +131,9 @@ function Register({ onBack }) {
         // );
         setFilteredNotices(response.data.data);
 
-        const updatedItemColors = response.data.data.map((data)=>{
-          if(data.scrap == true){
-            return "red";
-          } else {
-            return "grey";
-          }
-        })
+        const updatedItemColors = response.data.data.map(data =>
+          data.scrap === true ? "red" : "grey"
+        );
         setItemColors(updatedItemColors);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
