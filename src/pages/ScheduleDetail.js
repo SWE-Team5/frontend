@@ -47,52 +47,52 @@ function ScheduleDetail({}){
       }, {}));
 
 
-    // useEffect(()=>{
-    //     const fetchData = async()=>{
-    //         try {
-    //             console.log("Fetching schedule-related notices...");
-    //             const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
-    //               { title: title },
-    //               { headers: { Authorization: access_token_with_header } }
-    //               );
+    useEffect(()=>{
+        const fetchData = async()=>{
+            try {
+                console.log("Fetching schedule-related notices...");
+                const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+                  { title: title },
+                  { headers: { Authorization: access_token_with_header } }
+                  );
         
-    //             if (response.data.msg === "get schedule-related notices success") {
-    //               const relatedNotice = response.data.data.map((item) => ({
-    //                 id: item.noti_id,
-    //                 title: item.title,
-    //                 url: item.url,
-    //                 read: item.read,
-    //                 isBookMarked: item.isBookMarked,
-    //               }));
+                if (response.data.msg === "get schedule-related notices success") {
+                  const relatedNotice = response.data.data.map((item) => ({
+                    id: item.noti_id,
+                    title: item.title,
+                    url: item.url,
+                    read: item.read,
+                    isBookMarked: item.isBookMarked,
+                  }));
         
-    //               setNotices(relatedNotice);
-    //               setSortedNotices(relatedNotice.sort((a, b) => a.read - b.read));
+                  setNotices(relatedNotice);
+                  setSortedNotices(relatedNotice.sort((a, b) => a.read - b.read));
 
-    //               const updatedRead = relatedNotice.reduce((acc, item) => {
-    //                 if (item.read) {
-    //                   acc[item.id] = true; // d.noti_id를 키로, true를 값으로 설정
-    //                 } else{
-    //                   acc[item.id] = false;
-    //                 }
-    //                 return acc; // 누적된 딕셔너리 반환
-    //               }, {});
-    //               setReads(updatedRead);
+                  const updatedRead = relatedNotice.reduce((acc, item) => {
+                    if (item.read) {
+                      acc[item.id] = true; // d.noti_id를 키로, true를 값으로 설정
+                    } else{
+                      acc[item.id] = false;
+                    }
+                    return acc; // 누적된 딕셔너리 반환
+                  }, {});
+                  setReads(updatedRead);
 
-    //               setMessage(response.data.msg);
-    //             } else {
-    //               setMessage(response.data.msg);
-    //             }
-    //           } catch (error) {
-    //             if (error.response) {
-    //               setMessage(error.response.data.msg);
-    //             } else {
-    //               setMessage("An error occurred while connecting to the server.");
-    //             }
-    //           }
-    //     }
+                  setMessage(response.data.msg);
+                } else {
+                  setMessage(response.data.msg);
+                }
+              } catch (error) {
+                if (error.response) {
+                  setMessage(error.response.data.msg);
+                } else {
+                  setMessage("An error occurred while connecting to the server.");
+                }
+              }
+        }
 
-    //     fetchData();
-    // }, []);
+        fetchData();
+    }, []);
 
 
 
@@ -275,7 +275,7 @@ function ScheduleDetail({}){
                                 const isMarked = selectedMark[idx];
                                 return(
                                     <div className="w-full">
-                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "lightgray" : "darkgray"}} key={idx}
+                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: reads[notice.id] ? "lightgray" : "darkgray"}} key={idx}
                                         onClick={(e)=>{eventClickHandler(notice, idx, e)}}>
                                             <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
                                             <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 
