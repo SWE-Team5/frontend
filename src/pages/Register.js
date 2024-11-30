@@ -21,6 +21,7 @@ function Register({ onBack }) {
   const [keywords, setKeywords] = useState([]);
   const [message, setMessage] = useState("");
 
+  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
 
   useEffect(()=>{
     const fetchData = async () =>{
@@ -33,6 +34,22 @@ function Register({ onBack }) {
         );
         console.log("response", response);
           // 서버로부터 받은 응답 처리
+<<<<<<< HEAD
+        if (response.data.msg === "get registerd keyword success") {
+          console.log("response data", response.data);
+          setKeywords(response.data.data);
+
+          const updatedItemColors = response.data.data.map(data =>
+            data.scrap === true ? "red" : "grey"
+          );
+  
+          console.log("updatedItemColors", updatedItemColors)
+          setItemColors(updatedItemColors);
+          setMessage(response.data.msg); // "register keyword successful"
+        } else {
+          setMessage(response.data.msg); // "Invalid credentials"
+        }
+=======
           if (response.data.msg === "get registerd keyword success") {
             console.log("response data", response.data);
             setKeywords(response.data.data);
@@ -47,6 +64,7 @@ function Register({ onBack }) {
           } else {
             setMessage(response.data.msg); // "Invalid credentials"
           }
+>>>>>>> 67d4ebead9e1ea2a6a16fd990bc3866c387cacab
       } catch (error) {
         // 에러 처리
         if (error.response) {
@@ -69,14 +87,17 @@ function Register({ onBack }) {
     {
       title: "2024학년도 학사과정 겨울 계절수업 운영 안내",
       url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122612&article.offset=0&articleLimit=10&srSearchVal=2024%ED%95%99%EB%85%84%EB%8F%84+%ED%95%99%EC%82%AC%EA%B3%BC%EC%A0%95+%EA%B2%A8%EC%9A%B8+%EA%B3%84%EC%A0%88%EC%88%98%EC%97%85+%EC%9A%B4%EC%98%81+%EC%95%88%EB%82%B4",
+      scrap:0,
     },
     {
       title: "[반도체소부장혁신융합대학사업단] 2024학년도 겨울계절학기 수강신청 안내",
       url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=122309&article.offset=0&articleLimit=10&srSearchVal=%EB%B0%98%EB%8F%84%EC%B2%B4%EC%86%8C%EB%B6%80%EC%9E%A5%ED%98%81%EC%8B%A0%EC%9C%B5%ED%95%A9%EB%8C%80%ED%95%99%EC%82%AC%EC%97%85%EB%8B%A8%5D+2024%ED%95%99%EB%85%84%EB%8F%84+%EA%B2%A8%EC%9A%B8%EA%B3%84%EC%A0%88%ED%95%99%EA%B8%B0+%EC%88%98%EA%B0%95%EC%8B%A0%EC%B2%AD+%EC%95%88%EB%82%B4",
+      scrap:1,
     },
     {
       title: "[행사/세미나] 글로벌 IT전문가와 킹고인의 만남 시즌2 쉰일곱번째 만남 참가 신청(3/28 목)",
       url: "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=116546&article.offset=0&articleLimit=10&srSearchVal=%5B%ED%96%89%EC%82%AC%2F%EC%84%B8%EB%AF%B8%EB%82%98%5D+",
+      scrap:0,
     },
   ];
 
@@ -141,6 +162,8 @@ function Register({ onBack }) {
         const updatedItemColors = response.data.data.map(data =>
           data.scrap === true ? "red" : "grey"
         );
+
+        console.log("updatedItemColors", updatedItemColors)
         setItemColors(updatedItemColors);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
@@ -172,15 +195,20 @@ function Register({ onBack }) {
     console.log("index", index);
     console.log("notice", notice);
 
-    setItemColors((prevColors) =>
-      prevColors.map((color, i) =>
-        i === index ? (color === "gray" ? "red" : "gray") : color
-      )
-    );
+    // setItemColors((prevColors) =>
+    //   prevColors.map((color, i) =>
+    //     i === index ? (color === "gray" ? "red" : "gray") : color
+    //   )
+    // );    
 
     e.preventDefault();
 
-    if(itemColors[index] === "gray"){
+    if(notice.scrap){
+      setFilteredNotices((prev)=>
+        prev.map((noti) =>
+          noti.id === notice.noti_id ? { ...noti, scrap: 0 } : noti
+        )
+      )
       try {
         const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.noti_id}`,
           { scrap: 0 },
@@ -204,6 +232,11 @@ function Register({ onBack }) {
       }
   }
   else{
+      setFilteredNotices((prev)=>
+        prev.map((noti) =>
+          noti.id === notice.id ? { ...noti, scrap: 1 } : noti
+        )
+      )
       try {
           const response = await axios.post(`http://127.0.0.1:5000/user/noti/${notice.noti_id}`,
             { scrap: 1 },
@@ -316,7 +349,7 @@ function Register({ onBack }) {
                         <IoBookmarkSharp
                           size={20}
                           className={`bg-inherit cursor-pointer ${
-                            itemColors[index] === "red"
+                            notice.scrap
                               ? "text-red-500"
                               : "text-gray-500"
                           }`}
