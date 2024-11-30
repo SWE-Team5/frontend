@@ -136,7 +136,7 @@ function ScheduleDetail({}){
         }
 
         // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: propsNotice, selectedMark: selectedMark, page:"scheduleDetail", access_token:access_token }});
+        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: sortedNotices, selectedMark: selectedMark, page:"scheduleDetail", access_token:access_token }});
     };
 
     const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
