@@ -15,6 +15,7 @@ function Register({ onBack }) {
   const access_token = localStorage.getItem('access_token');
   console.log(access_token); 
 
+  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const access_token_with_header = "Bearer " + access_token;
 
   const [keywords, setKeywords] = useState([]);
@@ -59,7 +60,6 @@ function Register({ onBack }) {
   }, [])
   
   const [inputKeyword, setInputKeyword] = useState("");
-  const [itemColors, setItemColors] = useState(["gray", "gray", "gray", "gray"]);
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [filteredNotices, setFilteredNotices] = useState([]);
   const [clickedKeyword, setClickedKeyword] = useState("");
