@@ -116,10 +116,10 @@ function ScheduleDetail({}){
         
         try {
           console.log("Edit schedule-related notices...");
-          const response = await axios.patch(`http://127.0.0.1:5000/user/noti/${notice.id}`, {
-              access_token: access_token_with_header,
-              update: "read"
-          });
+          const response = await axios.patch(`http://127.0.0.1:5000/user/noti/${notice.id}`, 
+            {  update: "read"},
+            { headers: { Authorization: access_token_with_header } }
+        );
   
           if (response.data.msg === "edit related notice read success") {
             
