@@ -8,6 +8,7 @@ import sort from "../assets/images/sort.png";
 import axios from "axios";
 
 function NotificationRelated() {
+  
   const navigate = useNavigate();
   const location = useLocation();
   const [currentView, setCurrentView] = useState("main");
@@ -16,7 +17,8 @@ function NotificationRelated() {
   // 전달받은 공지사항 데이터
   const selectedNotification = location.state?.notification || {};
   const keywordid = location.state?.keywordid ? location.state.keywordid : "";
-  const access_token = location.state?.access_token ? location.state.access_token : "" ;
+  const access_token = localStorage.getItem('access_token');
+  console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   // 더미 관련 데이터

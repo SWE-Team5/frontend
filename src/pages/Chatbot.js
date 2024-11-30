@@ -8,6 +8,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 function Chatbot({ onBack }) {
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { text: "안녕하세요? 저는 킹고봇입니다. 무엇을 도와드릴까요?", sender: "bot" },
@@ -15,8 +16,8 @@ function Chatbot({ onBack }) {
   const [input, setInput] = useState("");
 
   const location = useLocation();
-  
-  const access_token = location.state.access_token ? location.state.access_token : "";
+  const access_token = localStorage.getItem('access_token');
+console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   const handleSendMessage = async(e) => {
@@ -25,8 +26,9 @@ function Chatbot({ onBack }) {
 
     const input_edited = input.trim();
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/chat/login/${input_edited}`, {
-        access_token : access_token_with_header
+      const response = await axios.post(`http://127.0.0.1:5000/chat`, {
+        headers: { Authorization: access_token_with_header },
+        word : input_edited
       });
       console.log("response", response);
         // 서버로부터 받은 응답 처리
@@ -37,7 +39,7 @@ function Chatbot({ onBack }) {
         setMessages([...messages, { text: input_edited, sender: "user" }]);
         setInput("");
         setTimeout(() => {
-          setMessages((prev) => [...prev, { text: response.data.res, sender: "bot" }]);
+          setMessages((prev) => [...prev, { text: response.data.response, sender: "bot" }]);
         }, 500);
       } else {
         setMessage(response.data.msg); // "Invalid credentials"
@@ -73,7 +75,11 @@ function Chatbot({ onBack }) {
         {messages.map((message, index) => (
           <div
             key={index}
+<<<<<<< HEAD
             className={`mb-2 p-3 shadow-md rounded-lg text-sm overflow-hidden ${
+=======
+            className={`mb-2 p-3 shadow-md rounded-lg text-sm break-words ${
+>>>>>>> a69c2ec983d67ccf0710dcbdbd6d28cb17482477
               message.sender === "user"
                 ? "ml-auto mr-2 bg-white text-right max-w-[60%]" // Reduced max width and added `mr-2`
                 : "mr-auto bg-white text-left max-w-[70%] ml-2" // Added margin for bot messages

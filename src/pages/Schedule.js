@@ -26,22 +26,97 @@ function Schedule(){
     const navigate = useNavigate();
     const location = useLocation();
 
-    const access_token = location.state?.access_token ? location.state.access_token : "" ;
+    const access_token = localStorage.getItem('access_token');
+    console.log(access_token);
     const access_token_with_header = "Bearer " + access_token;
+
     const [message, setMessage] = useState("");
 
     const [todos, setTodos] = useState([
-        {id:1, title: '2024학년도 2학기 개시일' , start:'2024-03-01', notice: [], new: 0, keywordid: ""},
-        {id:2, title: '2학기 개강', start:'2024-03-04', notice:[], new: 0, keywordid: ""},
-        {id:3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start:'2024-03-04', end:'2024-03-07',
-          notice: [{title : '2024년 여름 전체 학위수여식 참석(신청) 안내(졸업생/축하객, 신청일: 학사 8.13./석사 8.14.)', read : 1, url : ""},
-            {title:'2024학년도 2학기 학사과정 조기졸업 신청 안내', read : 0, url : "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=view&articleNo=119786&article.offset=0&articleLimit=10&srSearchVal=2024%EB%85%84+%EC%97%AC%EB%A6%84+%EC%A0%84%EC%B2%B4+%ED%95%99%EC%9C%84%EC%88%98%EC%97%AC%EC%8B%9D+%EC%B0%B8%EC%84%9D%28%EC%8B%A0%EC%B2%AD%29+%EC%95%88%EB%82%B4"},
-            {title:'2024년 금신사랑장학생 선발 안내', read : 1, url : ""},
-          ]
-        , new:1, keywordid: ""},
-        {id:4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start:'2024-03-04', end:'2024-03-07',
-          notice: [], new:0, keywordid: ""
-        },
+      {id: 1, title: '2024학년도 및 1학기 개시일', start: '2024-03-01', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 2, title: '1학기 개강', start: '2024-03-04', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 3, title: '학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청', start: '2024-03-04', end: '2024-03-07', notice: [], new: 0, keywordid: ""},
+      {id: 4, title: '대학원과정 논문제출자격시험 응시(면제) 신청', start: '2024-03-04', end: '2024-03-07', notice: [], new: 0, keywordid: ""},
+      {id: 5, title: '2024학년도 1학기 추가 등록(분할납부자 포함)', start: '2024-03-04', end: '2024-03-08', notice: [], new: 0, keywordid: ""},
+      {id: 6, title: '수강신청 확인/변경', start: '2024-03-04', end: '2024-03-09', notice: [], new: 0, keywordid: ""},
+      {id: 7, title: '학사과정 학점포기 신청', start: '2024-03-13', end: '2024-03-15', notice: [], new: 0, keywordid: ""},
+      {id: 8, title: '학생제안주간(Student Suggestion Week)', start: '2024-03-18', end: '2024-03-29', notice: [], new: 0, keywordid: ""},
+      {id: 9, title: '수강철회 신청', start: '2024-03-20', end: '2024-03-22', notice: [], new: 0, keywordid: ""},
+      {id: 10, title: '(학기 개시 30일)', start: '2024-03-30', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 11, title: '(수업일수 1/4)', start: '2024-03-31', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 12, title: '등록금 분할납부 신청자 2차 등록(4회 분납자)', start: '2024-04-01', end: '2024-04-03', notice: [], new: 0, keywordid: ""},
+      {id: 13, title: '등록금 분할납부 신청자 최종(2회 분납자)/ 3차(4회 분납자) 등록', start: '2024-04-22', end: '2024-04-24', notice: [], new: 0, keywordid: ""},
+      {id: 14, title: '1학기 중간시험', start: '2024-04-22', end: '2024-04-26', notice: [], new: 0, keywordid: ""},
+      {id: 15, title: '학사과정 복수전공, 융합트랙, 마이크로디그리 1차 신청', start: '2024-04-22', end: '2024-04-26', notice: [], new: 0, keywordid: ""},
+      {id: 16, title: '대학원과정 학위논문 예비·심사 신청', start: '2024-04-22', end: '2024-04-29', notice: [], new: 0, keywordid: ""},
+      {id: 17, title: '1학기 중간강의평가', start: '2024-04-22', end: '2024-05-03', notice: [], new: 0, keywordid: ""},
+      {id: 18, title: '(수업일수 2/4)', start: '2024-04-27', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 19, title: '(학기 개시 60일)', start: '2024-04-29', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 20, title: '등록금 분할납부 신청자 최종 등록(4회 분납자)', start: '2024-05-13', end: '2024-05-16', notice: [], new: 0, keywordid: ""},
+      {id: 21, title: '(수업일수 3/4) 일반휴학신청 마감기한', start: '2024-05-25', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 22, title: '재학중 입대휴학자 학점인정 신청가능 입대일', start: '2024-05-26', end: '2024-06-21', notice: [], new: 0, keywordid: ""},
+      {id: 23, title: '2024학년도 2학기 학사과정 학석사연계과정 신청', start: '2024-05-27', end: '2024-06-07', notice: [], new: 0, keywordid: ""},
+      {id: 24, title: '(학기 개시 90일)', start: '2024-05-29', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 25, title: '1학기 기말강의평가', start: '2024-06-03', end: '2024-06-14', notice: [], new: 0, keywordid: ""},
+      {id: 26, title: '1학기 기말시험', start: '2024-06-17', end: '2024-06-21', notice: [], new: 0, keywordid: ""},
+      {id: 27, title: '1학기 성적 입력', start: '2024-06-17', end: '2024-06-27', notice: [], new: 0, keywordid: ""},
+      {id: 28, title: '1학기 종강 (수업일수 4/4)', start: '2024-06-21', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 29, title: '여름방학', start: '2024-06-22', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 30, title: '여름 계절수업/ 도전학기 시작', start: '2024-06-24', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 31, title: '1학기 성적 공시', start: '2024-06-28', end: '2024-07-03', notice: [], new: 0, keywordid: ""},
+      {id: 32, title: '2024년 8월 졸업예정 학사과정 3품인증 취득증빙 제출기한', start: '2024-06-30', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 33, title: '1학기 성적 확정', start: '2024-07-08', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 34, title: '2024년 8월 학위취득예정 대학원과정 학위논문 On-line 탑재 완료 기한', start: '2024-07-11', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 35, title: '학사과정 복수전공, 융합트랙, 마이크로디그리 2차 신청(교직복수전공 포함)', start: '2024-07-15', end: '2024-07-19', notice: [], new: 0, keywordid: ""},
+      {id: 36, title: '2024년 8월 학위취득예정 대학원과정 학위논문 인쇄본 제출 기한', start: '2024-07-19', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 37, title: '2학기 재입학 신청', start: '2024-07-22', end: '2024-07-26', notice: [], new: 0, keywordid: ""},
+      {id: 38, title: '2학기 복학 신청', start: '2024-07-22', end: '2024-08-02', notice: [], new: 0, keywordid: ""},
+      {id: 39, title: '2학기 일반휴학 신청', start: '2024-07-29', end: '2024-09-06', notice: [], new: 0, keywordid: ""},
+      {id: 40, title: '2024학년도 2학기 등록금 분할납부 신청', start: '2024-08-19', end: '2024-08-21', notice: [], new: 0, keywordid: ""},
+      {id: 41, title: '2024학년도 2학기 등록/ 분할납부 신청자 1차 등록', start: '2024-08-22', end: '2024-08-29', notice: [], new: 0, keywordid: ""},
+      {id: 42, title: '2024년 여름 학위수여식', start: '2024-08-23', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 43, title: '여름방학 종료', start: '2024-08-31', end: '', notice: [], new: 0, keywordid: ""},
+      {id: 44, title: "2024학년도 2학기 개강", start: "2024-09-02", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 45, title: "학사과정 조기졸업/석사과정 수업연한 단축/석박사통합과정 조기수료·이수포기 신청", start: "2024-09-02", end: "2024-09-05", notice: [], new: 0, keywordid: ""},
+      {id: 46, title: "대학원과정 논문제출자격시험 응시(면제) 신청", start: "2024-09-02", end: "2024-09-05", notice: [], new: 0, keywordid: ""},
+      {id: 47, title: "2024학년도 2학기 추가 등록(분할납부자 포함)", start: "2024-09-02", end: "2024-09-06", notice: [], new: 0, keywordid: ""},
+      {id: 48, title: "수강신청 확인/변경", start: "2024-09-02", end: "2024-09-07", notice: [], new: 0, keywordid: ""},
+      {id: 49, title: "학사과정 학점포기 신청", start: "2024-09-11", end: "2024-09-13", notice: [], new: 0, keywordid: ""},
+      {id: 50, title: "학생제안주간(Student Suggestion Week)", start: "2024-09-16", end: "2024-09-27", notice: [], new: 0, keywordid: ""},
+      {id: 51, title: "수강철회 신청", start: "2024-09-19", end: "2024-09-21", notice: [], new: 0, keywordid: ""},
+      {id: 52, title: "건학기념일", start: "2024-09-25", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 53, title: "공부자탄강일", start: "2024-09-28", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 54, title: "등록금 분할납부 신청자 2차 등록(4회 분납자)", start: "2024-10-01", end: "2024-10-04", notice: [], new: 0, keywordid: ""},
+      {id: 55, title: "등록금 분할납부 신청자 최종(2회 분납자)/ 3차(4회 분납자) 등록", start: "2024-10-21", end: "2024-10-23", notice: [], new: 0, keywordid: ""},
+      {id: 56, title: "2학기 중간시험", start: "2024-10-21", end: "2024-10-25", notice: [], new: 0, keywordid: ""},
+      {id: 57, title: "학사과정 복수전공, 융합트랙, 마이크로디그리 1차 신청", start: "2024-10-21", end: "2024-10-25", notice: [], new: 0, keywordid: ""},
+      {id: 58, title: "대학원과정 학위논문 예비·심사 신청", start: "2024-10-21", end: "2024-10-28", notice: [], new: 0, keywordid: ""},
+      {id: 59, title: "2학기 중간강의평가", start: "2024-10-21", end: "2024-11-01", notice: [], new: 0, keywordid: ""},
+      {id: 60, title: "학사과정 교직과정 신청", start: "2024-11-11", end: "2024-11-15", notice: [], new: 0, keywordid: ""},
+      {id: 61, title: "일반휴학신청 마감기한", start: "2024-11-23", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 62, title: "재학중 입대휴학자 학점인정 신청가능 입대일", start: "2024-11-24", end: "2024-12-20", notice: [], new: 0, keywordid: ""},
+      {id: 63, title: "2025학년도 1학기 학사과정 학석사연계과정 신청", start: "2024-11-25", end: "2024-12-06", notice: [], new: 0, keywordid: ""},
+      {id: 64, title: "2학기 기말강의평가", start: "2024-12-02", end: "2024-12-13", notice: [], new: 0, keywordid: ""},
+      {id: 65, title: "2학기 기말시험", start: "2024-12-16", end: "2024-12-20", notice: [], new: 0, keywordid: ""},
+      {id: 66, title: "2학기 성적 입력", start: "2024-12-16", end: "2024-12-26", notice: [], new: 0, keywordid: ""},
+      {id: 67, title: "2학기 종강", start: "2024-12-20", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 68, title: "겨울방학 시작", start: "2024-12-21", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 69, title: "겨울 계절수업 시작", start: "2024-12-23", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 70, title: "2학기 성적 공시", start: "2024-12-27", end: "2025-01-02", notice: [], new: 0, keywordid: ""},
+      {id: 71, title: "2025년 2월 졸업예정 학사과정 3품인증 취득증빙 제출기한", start: "2024-12-30", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 72, title: "2학기 성적 확정", start: "2025-01-07", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 73, title: "2025년 2월 학위취득예정 대학원과정 학위논문 On-line 탑재 완료 기한", start: "2025-01-09", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 74, title: "학사과정 복수전공, 융합트랙, 마이크로디그리 2차 신청(교직복수전공 포함)", start: "2025-01-13", end: "2025-01-17", notice: [], new: 0, keywordid: ""},
+      {id: 75, title: "2025년 2월 학위취득예정 대학원과정 학위논문 인쇄본 제출 기한", start: "2025-01-17", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 76, title: "2025학년도 1학기 재입학 신청", start: "2025-01-20", end: "2025-01-24", notice: [], new: 0, keywordid: ""},
+      {id: 77, title: "2025학년도 1학기 복학 신청", start: "2025-01-20", end: "2025-01-31", notice: [], new: 0, keywordid: ""},
+      {id: 78, title: "2025학년도 1학기 일반휴학 신청", start: "2025-01-27", end: "2025-03-07", notice: [], new: 0, keywordid: ""},
+      {id: 79, title: "2025학년도 1학기 등록금 분할납부 신청", start: "2025-02-12", end: "2025-02-14", notice: [], new: 0, keywordid: ""},
+      {id: 80, title: "2025학년도 1학기 등록/분할납부 신청자 1차 등록", start: "2025-02-19", end: "2025-02-27", notice: [], new: 0, keywordid: ""},
+      {id: 81, title: "2025년 겨울 학위수여식", start: "2025-02-25", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 82, title: "겨울방학 종료", start: "2025-02-28", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 83, title: "2025학년도 및 1학기 개시일", start: "2025-03-01", end: "", notice: [], new: 0, keywordid: ""},
+      {id: 84, title: "2025학년도 1학기 개강", start: "2025-03-04", end: "", notice: [], new: 0, keywordid: ""}
     ]);
 
       // 날짜가 겹치는 이벤트들을 그룹화하는 함수
@@ -114,7 +189,6 @@ function Schedule(){
         });
       }, [groupedEvents]);
 
-      console.log('todos',todos, groupedEvents, fullCalendarEvents)
 
 
       const transformEvents = (events) => {
@@ -185,7 +259,6 @@ function Schedule(){
     // },[currentEvents])
 
     const handleViewDidMount = (arg) => {
-      console.log("View Mounted:", arg.view.type, currentView, fullCalendarEvents, transformEvents(fullCalendarEvents));
       // setWrittenDate([]);
       // setPrintedScheIndx(0);
       if (arg.view.type === "dayGridMonth") {
@@ -201,7 +274,6 @@ function Schedule(){
       if (currentView === "dayGridMonth") {
         setCurrentEvents(fullCalendarEvents);
       } else if (currentView === "listMonth") {
-        console.log("listmonth current events update")
         setCurrentEvents(transformEvents(fullCalendarEvents));
       }
     },[fullCalendarEvents])
@@ -220,7 +292,7 @@ function Schedule(){
     
       };
 
-    const eventClickHandler = async (info, e) => {
+    const eventClickHandler = async (info) => {
       // info.preventDefault();
 
       // setTodos((prevTodos) =>
@@ -229,16 +301,19 @@ function Schedule(){
       //   )
       // );
 
-      e.preventDefault();
+      const { event, jsEvent } = info;
+
+      // jsEvent를 사용하여 기본 동작을 방지
+      jsEvent.preventDefault();
 
       console.log("click", info);
       
       try {
         console.log("Fetching schedule-related notices...");
-        const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
-            access_token: access_token_with_header,
-            title: info.event.title
-        });
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+          { title: info.event.title },
+          { headers: { Authorization: access_token_with_header } }
+          );
 
         if (response.data.msg === "get schedule-related notices success") {
           const relatedNotice = response.data.data.map((item) => ({
@@ -271,7 +346,6 @@ function Schedule(){
 
     const eventClickHandler2 = async (event, e) => {
       // info.preventDefault();
-      console.log(event);
       // setTodos((prevTodos) =>
       //   prevTodos.map((todo) =>
       //     todo.id === event.id ? { ...todo, new: 0 } : todo
@@ -281,11 +355,10 @@ function Schedule(){
       e.preventDefault();
 
       try {
-        console.log("Fetching schedule-related notices...");
-        const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
-            access_token: access_token_with_header,
-            title: event.title
-        });
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+          { title: event.title },
+          { headers: { Authorization: access_token_with_header } }
+        );
 
         if (response.data.msg === "get schedule-related notices success") {
           const relatedNotice = response.data.data.map((item) => ({
@@ -332,8 +405,8 @@ function Schedule(){
       try {
         console.log("Fetching schedule-related notices...");
         const response = await axios.get(`http://127.0.0.1:5000/user/schedule`, {
-            access_token: access_token_with_header,
-            title: event.title
+          headers : {Authorization: access_token_with_header}},{
+          title: event.title
         });
 
         if (response.data.msg === "get schedule-related notices success") {
@@ -400,7 +473,7 @@ function Schedule(){
         try {
           console.log("Fetching registered schedule...");
           const response = await axios.get(`http://127.0.0.1:5000/user/scrap`, {
-              access_token: access_token_with_header
+            headers : {Authorization: access_token_with_header}
           });
   
           if (response.data.msg === "get scrap notice success") {
@@ -452,7 +525,7 @@ function Schedule(){
         try {
           console.log("Fetching schedule-related notices...");
           const response = await axios.delete(`http://127.0.0.1:5000/user/${eventKeywordId}`, {
-              access_token: access_token_with_header
+            headers : {Authorization: access_token_with_header},
           });
   
           if (response.data.msg === "delete success") {
@@ -478,7 +551,7 @@ function Schedule(){
         try {
           console.log("Fetching schedule-related notices...");
           const response = await axios.post(`http://127.0.0.1:5000/user/keyword`, {
-              access_token: access_token_with_header,
+            headers : {Authorization: access_token_with_header},
               keyword: event.title
           });
   
@@ -741,7 +814,7 @@ function Schedule(){
                     handleWindowResize={true}
                     dragScroll={true}
                     locale="ko"
-                    eventClick={(info, e) => eventClickHandler(info, e)}
+                    eventClick={eventClickHandler}
                     // eventDidMount={eventDidMountHandler}
                     listDayFormat={{
                         weekday: "short",

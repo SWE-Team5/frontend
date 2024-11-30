@@ -11,7 +11,8 @@ function ScrapNotifications() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const access_token = location.state?.access_token ? location.state.access_token : "" ;
+  const access_token = localStorage.getItem('access_token');
+  console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
 
   const [currentView, setCurrentView] = useState("scrap");
@@ -39,7 +40,7 @@ function ScrapNotifications() {
       try {
         console.log("Fetching scrapped notices...");
         const response = await axios.get(`http://127.0.0.1:5000/user/scrap`, {
-            access_token: access_token_with_header
+          headers: { Authorization: access_token_with_header }
         });
 
         if (response.data.msg === "get scrap notice success") {
