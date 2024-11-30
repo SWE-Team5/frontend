@@ -26,6 +26,7 @@ function ScheduleDetail({}){
     const selectedFavorites = location.state?.selectedFavorites ? location.state.selectedFavorites : {};
     const preMark = location.state?.selectedMark ? location.state.selectedMark : {};
 
+
     const access_token = localStorage.getItem('access_token');
     console.log(access_token); 
     const access_token_with_header = "Bearer " + access_token;
@@ -35,6 +36,16 @@ function ScheduleDetail({}){
     //     '2024학년도 2학기 학사과정 조기졸업 신청 안내',
     //     '2024년 금신사랑장학생 선발 안내',
     //   ]
+
+    const [reads, setReads] = useState(notices.reduce((acc, item) => {
+        if (item.read) {
+          acc[item.id] = true; // d.noti_id를 키로, true를 값으로 설정
+        } else{
+          acc[item.id] = false;
+        }
+        return acc; // 누적된 딕셔너리 반환
+      }, {}));
+
 
     useEffect(()=>{
         const fetchData = async()=>{
@@ -56,6 +67,16 @@ function ScheduleDetail({}){
         
                   setNotices(relatedNotice);
                   setSortedNotices(relatedNotice.sort((a, b) => a.read - b.read));
+
+                  const updatedRead = relatedNotice.reduce((acc, item) => {
+                    if (item.read) {
+                      acc[item.id] = true; // d.noti_id를 키로, true를 값으로 설정
+                    } else{
+                      acc[item.id] = false;
+                    }
+                    return acc; // 누적된 딕셔너리 반환
+                  }, {});
+                  setReads(updatedRead);
 
                   setMessage(response.data.msg);
                 } else {
@@ -140,15 +161,10 @@ function ScheduleDetail({}){
     const eventClickHandler = async (notice, idx, e) => {
         console.log("click", notice, idx);
         var propsNotice = sortedNotices;
-        setSortedNotices((prevNotices) => {
-            const updatedNotices = prevNotices.map((notice, i) =>
+        const updatedNotices = sortedNotices.map((notice, i) =>
             i === idx ? {title: notice.title, read: 1, url: notice.url} : notice // 클릭한 항목의 두 번째 요소를 1로 변경
-            );
-            // 변경된 배열 다시 정렬
-            propsNotice = updatedNotices;
-            
-            return updatedNotices.sort((a, b) => a.read - b.read);
-        });
+        );
+        setSortedNotices(updatedNotices.sort((a, b) => a.read - b.read));
         console.log("propsNotice",propsNotice, sortedNotices)
 
         e.preventDefault();
@@ -175,7 +191,7 @@ function ScheduleDetail({}){
         }
 
         // return <Navigate to="/ScheduleDetail" title={arg.event.title} notice={arg.event.notice} />;
-        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: sortedNotices, selectedMark: selectedMark, page:"scheduleDetail", access_token:access_token }});
+        navigate("/schedule/detail/notice", {state:{scheduleTitle: title, title: notice.title, noticeURL: notice.url, notices: updatedNotices, selectedMark: selectedMark, page:"scheduleDetail", access_token:access_token }});
     };
 
     const [isAscending, setIsAscending] = useState(true); // 오름차순/내림차순 상태
@@ -259,7 +275,7 @@ function ScheduleDetail({}){
                                 const isMarked = selectedMark[idx];
                                 return(
                                     <div className="w-full">
-                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: notice.read ? "lightgray" : "darkgray"}} key={idx}
+                                        <div className="flex flex-row gap-1 justify-between notice w-full cursor-pointer" style={{backgroundColor: reads[notice.id] ? "lightgray" : "darkgray"}} key={idx}
                                         onClick={(e)=>{eventClickHandler(notice, idx, e)}}>
                                             <div className="flex-auto bg-inherit m-auto text-left align-middle h-fit">{notice.title}</div>
                                             <div className="flex-none event-favorite-star align-middle bg-inherit m-0" 
