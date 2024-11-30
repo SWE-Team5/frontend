@@ -10,7 +10,7 @@ import axios from "axios";
 function ScrapNotifications() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const access_token = localStorage.getItem('access_token');
   console.log(access_token); 
   const access_token_with_header = "Bearer " + access_token;
@@ -76,7 +76,7 @@ function ScrapNotifications() {
 
     try {
       const response = await axios.delete(`http://127.0.0.1:5000/user/noti/${id}`,
-        {        access_token : access_token_with_header        }
+       { headers: { Authorization: access_token_with_header }}
       );
       console.log("response.data", response.data);
         // 서버로부터 받은 응답 처리
