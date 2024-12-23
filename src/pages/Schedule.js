@@ -123,22 +123,22 @@ function Schedule(){
       const groupEventsByDate = (events) => {
         const groupedEvents = {};
         const displayedDateRanges = new Set(); // 이미 출력된 날짜 범위를 저장
-    
+
         events.forEach((event) => {
           const startDate = new Date(event.start);
           const endDate = new Date(event.end || event.start);
-    
+
           const startDateString = startDate.toLocaleDateString('ko-KR');
           const endDateString = endDate.toLocaleDateString('ko-KR');
-    
+
           const dateRangeKey = `${startDateString} - ${endDateString}`;
-    
+
           if (!groupedEvents[dateRangeKey]) {
             groupedEvents[dateRangeKey] = { events: [], isFirstOutput: true }; // 새로운 그룹 생성
           }
-    
+
           groupedEvents[dateRangeKey].events.push(event);
-    
+
           // 동일한 기간이 이미 출력되었는지 확인
           if (displayedDateRanges.has(dateRangeKey)) {
             groupedEvents[dateRangeKey].isFirstOutput = false; // 표시 안 함
@@ -146,13 +146,13 @@ function Schedule(){
             displayedDateRanges.add(dateRangeKey); // 날짜 범위를 추가
           }
         });
-    
+
         // 그룹화된 이벤트들을 정렬
         const sortedGroupedEvents = Object.keys(groupedEvents)
           .sort((a, b) => {
             const [startA, endA] = a.split(' - ').map((date) => new Date(date).getTime());
             const [startB, endB] = b.split(' - ').map((date) => new Date(date).getTime());
-    
+
             if (startA === startB) return endA - endB;
             return startA - startB;
           })
@@ -160,7 +160,7 @@ function Schedule(){
             acc[key] = groupedEvents[key];
             return acc;
           }, {});
-    
+
         return sortedGroupedEvents;
       };
 
@@ -193,13 +193,13 @@ function Schedule(){
 
       const transformEvents = (events) => {
         const groupedEvents = {};
-      
+
         events.forEach((event) => {
           const startDate = event.start;
           const endDate = event.end
             ? event.end
             : startDate;
-      
+
           const key = `${startDate}-${endDate}`;
           if (!groupedEvents[key]) {
             groupedEvents[key] = {
@@ -219,7 +219,7 @@ function Schedule(){
           groupedEvents[key].news.push(event.new); // 제목 추가
           groupedEvents[key].keywordids.push(event.keywordid);
         });
-      
+
         return Object.keys(groupedEvents).map((key) => {
           const group = groupedEvents[key];
           return {
@@ -234,7 +234,7 @@ function Schedule(){
           };
         });
       };
-      
+
     // const transformedEvents = useMemo(()=>transformEvents(fullCalendarEvents), [fullCalendarEvents]);
 
     // 현재 보이는 월을 기준으로 이벤트 필터링
@@ -289,7 +289,7 @@ function Schedule(){
             start: arg.view.currentStart,
             end: arg.view.currentEnd
         });
-    
+
       };
 
     const eventClickHandler = async (info) => {
@@ -307,10 +307,10 @@ function Schedule(){
       jsEvent.preventDefault();
 
       console.log("click", info);
-      
+
       try {
         console.log("Fetching schedule-related notices...");
-        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`,
           { title: info.event.title },
           { headers: { Authorization: access_token_with_header } }
           );
@@ -355,7 +355,7 @@ function Schedule(){
       e.preventDefault();
 
       try {
-        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`, 
+        const response = await axios.post(`http://127.0.0.1:5000/user/schedule`,
           { title: event.title },
           { headers: { Authorization: access_token_with_header } }
         );
@@ -465,7 +465,7 @@ function Schedule(){
 
     // const favorites = location.state.favorites ? location.state.favorites:{};
     const [selectedFavorites, setSelectedFavorites] = useState({});
-  
+
     useEffect(() => {
       // keywordid가 빈 문자열이 아닌 요소 필터링
 
@@ -475,7 +475,7 @@ function Schedule(){
           const response = await axios.get(`http://127.0.0.1:5000/user/scrap`, {
             headers : {Authorization: access_token_with_header}
           });
-  
+
           if (response.data.msg === "get scrap notice success") {
             const updatedTodos = todos.map((todo) => {
               const matchingData = response.data.data.find((item) => item.keyword === todo.title);
@@ -527,7 +527,7 @@ function Schedule(){
           const response = await axios.delete(`http://127.0.0.1:5000/user/${eventKeywordId}`, {
             headers : {Authorization: access_token_with_header},
           });
-  
+
           if (response.data.msg === "delete success") {
             setTodos((prevTodos) =>
               prevTodos.map((todo) =>
@@ -550,10 +550,10 @@ function Schedule(){
       else{
         try {
           console.log("Fetching schedule-related notices...");
-          const response = await axios.post(`http://127.0.0.1:5000/user/keyword`, 
+          const response = await axios.post(`http://127.0.0.1:5000/user/keyword`,
             { keyword: event.title, is_calendar: 1 },
             { headers: { Authorization: access_token_with_header } });
-  
+
           if (response.data.msg === "regist keyword success") {
             setTodos((prevTodos) =>
               prevTodos.map((todo) =>
@@ -579,7 +579,7 @@ function Schedule(){
       //   if (calendarRef.current) {
       //     calendarRef.current.getApi().refetchEvents();
       //   }
-      // }, 0); 
+      // }, 0);
     };
 
     // 리스트 일정에서 출력한 이벤트
@@ -617,9 +617,29 @@ function Schedule(){
     //   }
     // }, [currentEvents]);
 
+    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+
     const listViewEventContent = (arg) => {
       const { event } = arg;
       const isFavorite = selectedFavorites[arg.event.id];  // 해당 이벤트가 관심 목록에 있는지 확인
+
+      const calendarApi = arg.view.calendar; // fullCalendar 인스턴스
+      const view = calendarApi.view; // 현재 보이는 view
+
+      // 현재 보이는 달의 범위 가져오기
+      const startOfMonth = view.activeStart; // 현재 달의 시작 날짜
+      const endOfMonth = view.activeEnd; // 현재 달의 끝 날짜
+
+      // 현재 보이는 달의 이벤트 가져오기
+      const eventsInCurrentMonth = calendarApi.getEvents().filter((e) => {
+        return (e.start >= startOfMonth && e.start < endOfMonth) || (e.end >= startOfMonth && e.end < endOfMonth);
+      });
+
+      // 첫 번째 이벤트의 ID 가져오기
+      const firstEventId = eventsInCurrentMonth.length > 0 ? eventsInCurrentMonth[0].id : null;
+
+      console.log("First Event ID of the month:", firstEventId);
+
 
       // console.log(event.extendedProps.notice, selectedFavorites);
       // 이벤트가 여러 날짜에 걸쳐 있는지 확인하고 날짜 범위를 표시
@@ -637,12 +657,22 @@ function Schedule(){
           }).replace(' ', '')
         : startDate;
 
-          
+      const newMonth = startOfMonth.getMonth(); // 새로 렌더링된 달의 월 (0부터 시작)
+
+      // "다음 달"로 이동했는지 확인
+      if (newMonth !== currentMonth) {
+        console.log("newmonth", newMonth !== currentMonth, newMonth, currentMonth)
+        printedEventIds.clear();
+
+        setCurrentMonth(newMonth); // 새로운 월로 상태 업데이트
+      }
+
+
 
       if (arg.view.type === 'listMonth') {
           console.log("listview",arg, currentEvents, transformEvents(fullCalendarEvents), currentEvents.toString() !== transformEvents(fullCalendarEvents).toString(), currentEvents.some(event => event.title === arg.event.title));
-        
           const currentViewEvents = arg.view.calendar.getEvents();
+          console.log("null", currentView !== 'listMonth' || currentViewEvents.toString() !== transformEvents(fullCalendarEvents).toString(), !currentEvents.some(event => event.title === arg.event.title))
           if(currentView !== 'listMonth' || currentViewEvents.toString() !== transformEvents(fullCalendarEvents).toString()){
             return null;
           }
@@ -654,12 +684,12 @@ function Schedule(){
           const endDay = arg.event.end
             ? dayjs(arg.event.end).format("D일(ddd)")
             : null;
-          
+
           // 중복 여부 확인
           const eventKey = `${startDay}${endDay ? '-'+endDay : ''} `;
 
-          const prevStartDay = event.id > 1 ? dayjs(currentEvents[event.id-2].start).format("D일(ddd)") : "none";
-          const prevEndDay = event.id > 1 ? currentEvents[event.id-2].end
+          const prevStartDay = event.id > 1 ? dayjs(currentEvents[event.id-1].start).format("D일(ddd)") : "none";
+          const prevEndDay = event.id > 1 ? currentEvents[event.id-1].end
             ? dayjs(currentEvents[event.id-2].end).format("D일(ddd)")
             : null : "none";
 
@@ -674,26 +704,36 @@ function Schedule(){
           //   return;
           // }
 
-          const isScheInOrder = currentEvents[printedEventIds.size] ? currentEvents[printedEventIds.size].title == event.title : false
+          const isScheInOrder = event.id.includes(',') ? event.id[0] == Number(firstEventId) + Number(printedEventIds.size) : event.id == Number(firstEventId) + Number(printedEventIds.size);
 
           console.log('printed',arg, event, event.id,
-            printedEventIds, eventKey, currentEvents, 
+            printedEventIds, eventKey, currentEvents,
             printedEventIds.size, isScheInOrder, printedEventIds.has(event.id),
-            arg.event.title, event.title)
+            arg.event.title, event.title, event.id.length, event.id[0],
+            isScheInOrder, Number(firstEventId) + Number(printedEventIds.size), event.id, Number(firstEventId) + Number(printedEventIds.size) == event.id)
 
-          if (printedEventIds.has(event.id) || !isScheInOrder) {
+          if (printedEventIds.has(event.id)) {
             console.log("printed 2 true false", "return null")
             return null; // Skip rendering if already printed
           }
-        
+
           // Mark the event as printed
-          printedEventIds.add(event.id);
-          
+          // if(event.id.includes(',')){
+          //   var i = 0;
+          //   while(i != event.id.length){
+          //     printedEventIds.add(event.id[i]);
+          //     i++;
+          //   }
+          // }
+          // else{
+            printedEventIds.add(event.id);
+          // }
+
           var printedEventKeys = false;
           if(event.id > 1){
             printedEventKeys = eventKey == prevEventKey;
             console.log("printed EventKeys", eventKey == prevEventKey, eventKey,prevEventKey)
-          
+
           }
 
           const eventLen = event.id.split(",").map(id => id.trim()).length;
@@ -709,7 +749,7 @@ function Schedule(){
                 keywordid: event.extendedProps.keywordid[i]
               }];
             }
-            
+
           }
           console.log("events", events);
 
@@ -720,10 +760,10 @@ function Schedule(){
           // <Link className="w-full p-0"  to={event.extendedProps.notice ? "/scheduleDetail":""} state={{notice : event.extendedProps.notice ? event.extendedProps.notice : "", title : event.title}}>
           <div className="flex" style={{minWidth:"90px", margin:"8px 0px"}}>
             <time className="flex-none my-auto pr-3" style={{textSize:"10px", minWidth:"90px", textAlign:'right'}}>
-              {printedEventKeys ? "" : eventKey}
+              {eventKey}
               </time>
             <div className={`flex-auto custom-event flex flex-row py-0 ${event.extendedProps.notice.length > 0 ?'cursor-pointer' : 'cursor-default'}`}>
-                {event.id.split(",").map(id => id.trim()).length > 1 ? 
+                {event.id.split(",").map(id => id.trim()).length > 1 ?
                   <div className="flex flex-auto flex-col gap-1.5 w-full">
                   {events.map((event)=>(
                     <div key={event.id} className="flex flex-auto event-title align-middle p-1.5 m-0" style={{backgroundColor: selectedFavorites[event.id] ? 'rgb(105, 173, 1)': event.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
@@ -736,7 +776,7 @@ function Schedule(){
                               <FaStar className="bg-inherit my-auto"/>
                             </span> {/* 별표 아이콘 */}
                         </div>
-                    </div> 
+                    </div>
                   ))}
                   </div>
                   : <div className="flex flex-auto event-title align-middle p-1.5" style={{backgroundColor: isFavorite ? 'rgb(105, 173, 1)': event.extendedProps.notice.length > 0 ? 'darkgray':'lightgray', borderRadius:'3px'}}>
@@ -788,7 +828,7 @@ function Schedule(){
        <div className="relative w-full h-full bg-white">
             <Header page="Schedule"/>
             <div className="line"></div>
-            
+
             {/* <div className="flex justify-between space-x-1 text-center home_tabs bg-white">
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-blue-900 id_tab cursor-pointer">신분증</button>
                 <button className="w-full pt-1.5 pb-2 text-sm font-semibold text-white bg-zinc-300 kingo_tab cursor-pointer">KINGO ⓘ</button>
@@ -796,7 +836,7 @@ function Schedule(){
             </div> */}
 
             <div id="calender-container" className="h-fit m-3 mb-5 rounded-lg shadow-lg">
-                  
+
                <FullCalendar
                     ref={calendarRef}
                     className="block"
@@ -831,9 +871,9 @@ function Schedule(){
                         prev: "chevron-left",
                         next: "chevron-right",
                     }}
-                    
+
                     showNonCurrentDates={false}
-                    fixedWeekCount={false} 
+                    fixedWeekCount={false}
                     views={{
                             dayGridMonth: {
                             dayMaxEventRows: 0,
@@ -844,11 +884,11 @@ function Schedule(){
                             dayCellDidMount: (arg) => {
                                 // const viewStart = arg.view.currentStart; // 현재 View의 시작일
                                 // const currentMonth = viewStart.getMonth(); // 현재 월
-                    
+
                                 // // console.log("arg",arg, currentMonth, arg.date.getMonth());
                                 // // 이번 달의 날짜가 아닌 날짜들은 숨긴다.
                                 // if (arg.date.getMonth() !== currentMonth) {
-                                //   const startOfWeek = new Date(arg.date); 
+                                //   const startOfWeek = new Date(arg.date);
                                 //   startOfWeek.setDate(arg.date.getDate() - arg.date.getDay()); // 해당 날짜의 주 첫 번째 날(일요일)을 찾음
                                 //   const endOfWeek = new Date(startOfWeek);
                                 //   endOfWeek.setDate(startOfWeek.getDate() + 6); // 해당 날짜의 주 마지막 날(토요일)
@@ -856,7 +896,7 @@ function Schedule(){
 
                                 //   // startOfWeek가 현재 월과 같은 주에 속하는지 확인
                                 //   const sameWeek = startOfWeek.getMonth() == currentMonth || endOfWeek.getMonth() == currentMonth;
-                                  
+
                                 //   console.log(startOfWeek.getMonth(), currentMonth, endOfWeek.getMonth(), sameWeek);
                                 //   // 이전 달과 다음 달 날짜가 같은 주에 속하면 표시
                                 //   if (arg.date.getMonth() !== currentMonth && !sameWeek) {
@@ -886,7 +926,7 @@ function Schedule(){
 
             </div>
 
-       </div> 
+       </div>
     )
 
 }

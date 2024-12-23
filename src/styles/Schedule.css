@@ -258,6 +258,7 @@
     padding : 0px 0px;
 }
 
+
 /* 일별 이벤트 2개까지, oveflow 발생 시 관리*/
 /* .fc-daygrid-day-frame{
     overflow: scroll;
@@ -478,6 +479,10 @@ tr, th, td{
 
 }
 
+.fc-event.fc-event-past.fc-list-event .fc-list-event-title{
+    border: none !important;
+}
+
 tr, th, td ::before, ::after{
     border : 0px;
     border-color: transparent;
@@ -505,6 +510,9 @@ tr, th, td ::before, ::after{
     border: none !important; /* 추가적으로 border도 없앰 */
 }
 
+.fc-view-harness.fc-view-harness-passive{
+    margin:0px;
+}
 
 /*스케줄 형식 변환 : 캘랜더, 리스트형태*/
 
